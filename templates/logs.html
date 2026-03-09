@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADS — CloudTrail Analysis</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .log-entry {
+            display: grid;
+            grid-template-columns: 180px 1fr 140px;
+            gap: 20px; align-items: center;
+            padding: 16px 24px; background: rgba(102,126,234,0.03);
+            border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .log-entry:hover { border-color: var(--cyan); background: rgba(102,126,234,0.06); }
+        .log-time { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); }
+        .log-event { font-weight: 700; color: var(--green); font-size: 14px; }
+        .log-ip { font-family: 'JetBrains Mono', monospace; font-size: 11px; text-align: right; color: var(--purple); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header style="margin-bottom: 40px;">
+        <h1 class="gradient-text">CloudTrail Analysis</h1>
+        <p>Analyzing real-time intrusion events and behavioral patterns.</p>
+    </header>
+
+    {% if logs %}
+        <div style="margin-bottom: 40px;">
+            {% for e in logs %}
+                <div class="log-entry">
+                    <span class="log-time">{{ e.timestamp }}</span>
+                    <div>
+                        <div class="log-event">{{ e.event }}</div>
+                        <p style="font-size: 13px; color: var(--text); opacity: 0.7;">{{ e.action }}</p>
+                    </div>
+                    <span class="log-ip">{{ e.source_ip }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center; padding: 60px;">
+            <p style="font-size: 18px; color: var(--dim);">No intrusion logs available for this session.</p>
+            <p style="font-size: 14px; opacity: 0.6; margin-top: 10px;">Return to the terminal and execute commands to generate telemetry data.</p>
+        </div>
+    {% endif %}
+
+    <div style="display: flex; gap: 20px; justify-content: center; margin-top: 40px;">
+        <a href="/terminal" class="btn btn-outline" style="padding: 16px 32px;">← Terminal</a>
+        <a href="/solve" class="btn btn-primary" style="padding: 16px 64px; font-size: 17px;">Proceed to Mitigation →</a>
+    </div>
+</div>
+</body>
+</html>

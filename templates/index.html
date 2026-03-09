@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADS — Cloud Attack Defense Lab</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .hero-banner {
+            position: relative;
+            padding: 120px 0 100px 0;
+            overflow: hidden;
+        }
+        .hero-banner::after {
+            content: '';
+            position: absolute; top: 50%; left: 50%;
+            width: 800px; height: 400px;
+            background: linear-gradient(135deg, var(--green), var(--purple));
+            opacity: 0.05; filter: blur(120px);
+            z-index: -1; transform: translate(-50%, -50%);
+        }
+        .hero h1 { font-size: 82px; margin-bottom: 32px; }
+        .hero p { font-size: 24px; line-height: 1.5; color: var(--text); opacity: 0.8; margin-bottom: 50px; }
+        .feature-icon { font-size: 48px; margin-bottom: 24px; display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <section class="hero-banner">
+        <div class="hero">
+            <h1 class="gradient-text">Master Cloud <br>Security Hands-On</h1>
+            <p>Welcome to CADS — the premier platform for simulating real-world cloud attack and defense scenarios. Trained on the legendary <strong>UNSW-NB15</strong> dataset with AI-driven analysis.</p>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <a href="/labs" class="btn btn-primary" style="padding: 20px 48px; font-size: 18px;">Get Started Now →</a>
+                <a href="#features" class="btn btn-outline" style="padding: 20px 48px; font-size: 18px;">How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" style="margin-top: 60px;">
+        <div class="card-grid">
+            <div class="card">
+                <span class="feature-icon">🛡️</span>
+                <h3>Attack & Defend</h3>
+                <p>Choose your side. Simulate stealthy exfiltration or orchestrate a multi-layered defense to block intruders.</p>
+                <div class="log">Simulate: S3, IAM, Network, Pwndora</div>
+            </div>
+            <div class="card">
+                <span class="feature-icon">🤖</span>
+                <h3>AI Assistant</h3>
+                <p>Guided by Groq Llama 3 models and UNSW-NB15 patterns. Get instant strategy tips and technical command analysis.</p>
+                <div class="log">Dataset: 257,673 records</div>
+            </div>
+            <div class="card">
+                <span class="feature-icon">🔍</span>
+                <h3>Real Datasets</h3>
+                <p>Responses are grounded in actual network intrusion logs, ensuring your training is as realistic as possible.</p>
+                <div class="log">UNSW-NB15 / KDD-99 Patterns</div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="margin-top: 100px; text-align: center; opacity: 0.4; font-size: 13px;">
+        &copy; 2024 CADS Platform | Cybersecurity Lab | Advanced Research Project
+    </footer>
+</div>
+</body>
+</html>

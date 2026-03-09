@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "name": "Input Validation",
+    "pattern": "sanitize_input(user_data)",
+    "hint": "Validate all user inputs",
+    "example": "if (!preg_match('/^[a-z0-9]+$/i', $input)) reject();",
+    "level": "Beginner",
+    "category": "Prevention"
+  },
+  {
+    "id": 2,
+    "name": "Prepared Statements",
+    "pattern": "SELECT * FROM users WHERE id = ?",
+    "hint": "Use parameterized queries",
+    "example": "stmt = conn.prepare('SELECT * FROM users WHERE id = ?')",
+    "level": "Beginner",
+    "category": "Prevention"
+  },
+  {
+    "id": 3,
+    "name": "WAF Rules",
+    "pattern": "mod_security rules",
+    "hint": "Deploy web application firewall",
+    "example": "SecRule ARGS:id '@rx ^\\d+$'",
+    "level": "Intermediate",
+    "category": "Detection"
+  },
+  {
+    "id": 4,
+    "name": "CSRF Token",
+    "pattern": "Generate unique token per request",
+    "hint": "Implement CSRF tokens",
+    "example": "token = generate_token(); session['csrf'] = token",
+    "level": "Beginner",
+    "category": "Prevention"
+  },
+  {
+    "id": 5,
+    "name": "Rate Limiting",
+    "pattern": "Limit requests per IP/user",
+    "hint": "Throttle suspicious activity",
+    "example": "allow_request_if(requests < 100_per_minute)",
+    "level": "Intermediate",
+    "category": "Detection"
+  },
+  {
+    "id": 6,
+    "name": "Content Security Policy",
+    "pattern": "CSP headers",
+    "hint": "Restrict script sources",
+    "example": "Content-Security-Policy: default-src 'self'",
+    "level": "Intermediate",
+    "category": "Prevention"
+  },
+  {
+    "id": 7,
+    "name": "SQL Query Auditing",
+    "pattern": "Log all database queries",
+    "hint": "Monitor SQL for injection",
+    "example": "audit_log('query', query, user)",
+    "level": "Intermediate",
+    "category": "Detection"
+  },
+  {
+    "id": 8,
+    "name": "Session Timeout",
+    "pattern": "Expire sessions after 30 min",
+    "hint": "Limit session duration",
+    "example": "if (time() - session['last_activity'] > 1800) logout()",
+    "level": "Beginner",
+    "category": "Prevention"
+  },
+  {
+    "id": 9,
+    "name": "HTTPS Enforcement",
+    "pattern": "Redirect HTTP to HTTPS",
+    "hint": "Use SSL/TLS",
+    "example": "HSTS header + 301 redirect",
+    "level": "Beginner",
+    "category": "Prevention"
+  },
+  {
+    "id": 10,
+    "name": "File Upload Filter",
+    "pattern": "Validate MIME type",
+    "hint": "Prevent malicious uploads",
+    "example": "if (mime_type != 'image/jpeg') reject();",
+    "level": "Intermediate",
+    "category": "Prevention"
+  },
+  {
+    "id": 11,
+    "name": "Error Handling",
+    "pattern": "Generic error messages",
+    "hint": "Don't expose system details",
+    "example": "return 'An error occurred' instead of stack trace",
+    "level": "Beginner",
+    "category": "Prevention"
+  },
+  {
+    "id": 12,
+    "name": "Security Headers",
+    "pattern": "X-Frame-Options, X-Content-Type",
+    "hint": "Set protective headers",
+    "example": "X-Frame-Options: DENY",
+    "level": "Intermediate",
+    "category": "Prevention"
+  }
+]

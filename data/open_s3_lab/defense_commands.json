@@ -1,0 +1,145 @@
+[
+  {
+    "id": 1,
+    "name": "Enable Versioning",
+    "pattern": "aws s3api put-bucket-versioning --bucket {bucket} --versioning-configuration Status=Enabled",
+    "hint": "Enable object versioning for recovery",
+    "example": "aws s3api put-bucket-versioning --bucket lab-private --versioning-configuration Status=Enabled",
+    "level": "Intermediate",
+    "category": "Protection",
+    "description": "Protect against accidental deletion",
+    "expected_output": "VersioningConfiguration: Status=Enabled"
+  },
+  {
+    "id": 2,
+    "name": "Block Public Access",
+    "pattern": "aws s3api put-public-access-block --bucket {bucket} --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+    "hint": "Prevent public access to bucket",
+    "example": "aws s3api put-public-access-block --bucket open-lab-public --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+    "level": "Beginner",
+    "category": "Protection",
+    "description": "Enforce private access controls",
+    "expected_output": "PublicAccessBlockConfiguration: All blocks enabled"
+  },
+  {
+    "id": 3,
+    "name": "Enable Encryption",
+    "pattern": "aws s3api put-bucket-encryption --bucket {bucket} --server-side-encryption-configuration Rules=[{ApplyServerSideEncryptionByDefault: {SSEAlgorithm: AES256}}]",
+    "hint": "Enable server-side encryption",
+    "example": "aws s3api put-bucket-encryption --bucket lab-private --server-side-encryption-configuration Rules=[{ApplyServerSideEncryptionByDefault: {SSEAlgorithm: AES256}}]",
+    "level": "Intermediate",
+    "category": "Protection",
+    "description": "Encrypt all objects at rest",
+    "expected_output": "ServerSideEncryptionConfiguration: Enabled"
+  },
+  {
+    "id": 4,
+    "name": "Enable Logging",
+    "pattern": "aws s3api put-bucket-logging --bucket {bucket} --bucket-logging-status LoggingEnabled={TargetBucket: logs-bucket,TargetPrefix: access-logs/}",
+    "hint": "Enable S3 access logging",
+    "example": "aws s3api put-bucket-logging --bucket open-lab-public --bucket-logging-status LoggingEnabled={TargetBucket: logs-bucket,TargetPrefix: access-logs/}",
+    "level": "Intermediate",
+    "category": "Detection",
+    "description": "Monitor all bucket access",
+    "expected_output": "LoggingEnabled: true TargetBucket: logs-bucket"
+  },
+  {
+    "id": 5,
+    "name": "Set Restrictive Policy",
+    "pattern": "aws s3api put-bucket-policy --bucket {bucket} --policy file://policy.json",
+    "hint": "Apply restrictive bucket policy",
+    "example": "aws s3api put-bucket-policy --bucket lab-private --policy file://restrictive-policy.json",
+    "level": "Advanced",
+    "category": "Protection",
+    "description": "Limit access to specific principals/IPs",
+    "expected_output": "BucketPolicy: Applied successfully"
+  },
+  {
+    "id": 6,
+    "name": "Remove Public ACLs",
+    "pattern": "aws s3api put-object-acl --bucket {bucket} --key {key} --acl private",
+    "hint": "Change object from public to private",
+    "example": "aws s3api put-object-acl --bucket open-lab-public --key reports/report_001.txt --acl private",
+    "level": "Intermediate",
+    "category": "Remediation",
+    "description": "Revoke public access to specific objects",
+    "expected_output": "ObjectACL: private"
+  },
+  {
+    "id": 7,
+    "name": "Enable MFA Delete",
+    "pattern": "aws s3api put-bucket-versioning --bucket {bucket} --versioning-configuration Status=Enabled,MFADelete=Enabled",
+    "hint": "Require MFA for object deletion",
+    "example": "aws s3api put-bucket-versioning --bucket lab-private --versioning-configuration Status=Enabled,MFADelete=Enabled",
+    "level": "Advanced",
+    "category": "Protection",
+    "description": "Add extra layer of deletion protection",
+    "expected_output": "MFADeleteConfiguration: Enabled"
+  },
+  {
+    "id": 8,
+    "name": "Set Lifecycle Policy",
+    "pattern": "aws s3api put-bucket-lifecycle-configuration --bucket {bucket} --lifecycle-configuration file://lifecycle.json",
+    "hint": "Implement automatic object expiration",
+    "example": "aws s3api put-bucket-lifecycle-configuration --bucket lab-private --lifecycle-configuration file://lifecycle.json",
+    "level": "Advanced",
+    "category": "Protection",
+    "description": "Automatically delete old or sensitive objects",
+    "expected_output": "LifecycleConfiguration: Applied"
+  },
+  {
+    "id": 9,
+    "name": "Audit Access Logs",
+    "pattern": "aws s3 cp s3://logs-bucket/access-logs/ ./logs --recursive && grep -E 'GET|PUT' ./logs/*.log",
+    "hint": "Analyze bucket access logs for intrusions",
+    "example": "aws s3 cp s3://logs-bucket/access-logs/ ./logs --recursive && grep 'Anonymous' ./logs/*.log | wc -l",
+    "level": "Advanced",
+    "category": "Detection",
+    "description": "Identify suspicious access patterns",
+    "expected_output": "Found 42 anonymous access attempts in last 7 days"
+  },
+  {
+    "id": 10,
+    "name": "Enable CloudTrail",
+    "pattern": "aws cloudtrail put-event-selectors --trail-name my-trail --event-selectors ReadWriteType=All,IncludeManagementEvents=true,DataResources=[{Type: AWS::S3::Object,Values: [arn:aws:s3:::bucket/*]}]",
+    "hint": "Log all S3 API calls",
+    "example": "aws cloudtrail create-trail --name s3-audit-trail --s3-bucket-name audit-bucket",
+    "level": "Advanced",
+    "category": "Detection",
+    "description": "Track all API calls for compliance",
+    "expected_output": "TrailStatus: Enabled"
+  },
+  {
+    "id": 11,
+    "name": "Set Bucket Tags",
+    "pattern": "aws s3api put-bucket-tagging --bucket {bucket} --tagging TagSet=[{Key: Environment,Value: Production},{Key: DataClassification,Value: Sensitive}]",
+    "hint": "Tag bucket for governance",
+    "example": "aws s3api put-bucket-tagging --bucket lab-private --tagging TagSet=[{Key: DataType,Value: Confidential}]",
+    "level": "Beginner",
+    "category": "Management",
+    "description": "Organize and track sensitive buckets",
+    "expected_output": "BucketTags: Applied"
+  },
+  {
+    "id": 12,
+    "name": "Enable Requester Pays",
+    "pattern": "aws s3api put-bucket-request-payment --bucket {bucket} --request-payment-configuration Payer=Requester",
+    "hint": "Prevent cost exploitation",
+    "example": "aws s3api put-bucket-request-payment --bucket open-lab-public --request-payment-configuration Payer=Requester",
+    "level": "Intermediate",
+    "category": "Protection",
+    "description": "Control who pays for data transfer",
+    "expected_output": "RequesterPaysConfiguration: Enabled"
+  },
+  {
+    "id": 13,
+    "name": "Scan for Sensitive Data",
+    "pattern": "aws s3 ls s3://{bucket} --recursive | grep -iE 'password|secret|key|api|credential|token'",
+    "hint": "Find potentially sensitive files",
+    "example": "aws s3 ls s3://open-lab-public --recursive | grep -iE 'password|secret|key'",
+    "level": "Intermediate",
+    "category": "Detection",
+    "description": "Proactively identify risky files",
+    "expected_output": "Found: secret_keys.txt, aws_credentials.json, password_list.csv"
+  }
+]

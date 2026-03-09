@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@pwndora-lab.local",
+    "password_hash": "5f4dcc3b5aa765d61d8327deb882cf99",
+    "role": "admin",
+    "is_active": 1,
+    "created_at": "2025-08-06T04:37:34.035698+00:00"
+  },
+  {
+    "id": 2,
+    "username": "alice",
+    "email": "alice@pwndora-lab.local",
+    "password_hash": "e99a18c428cb38d5f260853678922e03",
+    "role": "user",
+    "is_active": 1,
+    "created_at": "2025-12-04T04:37:34.035736+00:00"
+  },
+  {
+    "id": 3,
+    "username": "bob",
+    "email": "bob@pwndora-lab.local",
+    "password_hash": "25f9e7d3fba6b6a893d40faea47147a5",
+    "role": "user",
+    "is_active": 1,
+    "created_at": "2025-12-19T04:37:34.035743+00:00"
+  },
+  {
+    "id": 4,
+    "username": "charlie",
+    "email": "charlie@pwndora-lab.local",
+    "password_hash": "5f4dcc3b5aa765d61d8327deb882cf99",
+    "role": "user",
+    "is_active": 1,
+    "created_at": "2026-01-03T04:37:34.035746+00:00"
+  },
+  {
+    "id": 5,
+    "username": "davinder",
+    "email": "davinder@pwndora-lab.local",
+    "password_hash": "0cbc6611f5540bd0809a388dc95a615b",
+    "role": "moderator",
+    "is_active": 1,
+    "created_at": "2026-01-18T04:37:34.035750+00:00"
+  },
+  {
+    "id": 6,
+    "username": "eva",
+    "email": "eva@pwndora-lab.local",
+    "password_hash": "fcea920f7412b5da7be0cf42b8c93759",
+    "role": "user",
+    "is_active": 1,
+    "created_at": "2026-01-08T04:37:34.035753+00:00"
+  },
+  {
+    "id": 7,
+    "username": "frank",
+    "email": "frank@pwndora-lab.local",
+    "password_hash": "827ccb0eea8a706c4c34a16891f84e7b",
+    "role": "user",
+    "is_active": 0,
+    "created_at": "2026-01-28T04:37:34.035756+00:00"
+  },
+  {
+    "id": 8,
+    "username": "grace",
+    "email": "grace@pwndora-lab.local",
+    "password_hash": "6512bd43d9caa6e02c990b0a82652dca",
+    "role": "moderator",
+    "is_active": 1,
+    "created_at": "2026-01-21T04:37:34.035760+00:00"
+  },
+  {
+    "id": 9,
+    "username": "henry",
+    "email": "henry@pwndora-lab.local",
+    "password_hash": "0b4e3a6e5c1d9f2b8a3c4e6f7d8e9a0b",
+    "role": "user",
+    "is_active": 1,
+    "created_at": "2026-01-13T04:37:34.035763+00:00"
+  },
+  {
+    "id": 10,
+    "username": "iris",
+    "email": "iris@pwndora-lab.local",
+    "password_hash": "5ab557c937e38aca2fab08e86f2e9404",
+    "role": "user",
+    "is_active": 1,
+    "created_at": "2026-01-15T04:37:34.035766+00:00"
+  }
+]

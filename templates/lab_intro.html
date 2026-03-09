@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADS — {{ lab_title }} Introduction</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .intro-header { margin-bottom: 60px; text-align: left; }
+        .intro-header h1 { font-size: 52px; margin-bottom: 12px; }
+        .intro-header p { font-size: 20px; color: var(--dim); }
+
+        .intro-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+        }
+        @media (max-width: 800px) { .intro-grid { grid-template-columns: 1fr; } }
+
+        .intro-card {
+            background: rgba(102,126,234,0.03);
+            border: 1px solid var(--border);
+            padding: 32px; border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .intro-card:hover { border-color: var(--purple); background: rgba(102,126,234,0.06); }
+        .intro-card h2 { color: var(--cyan); font-size: 22px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .intro-card h2 i { font-style: normal; font-size: 24px; }
+        .intro-card p { font-size: 15px; color: var(--text); opacity: 0.8; line-height: 1.8; }
+
+        .intro-card.highlight {
+            background: linear-gradient(135deg, rgba(0,255,156,0.08), rgba(102,126,234,0.03));
+            border-color: rgba(0,255,156,0.3);
+        }
+        .intro-card.highlight h2 { color: var(--green); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="intro-header">
+        <h1 class="gradient-text">{{ lab_title }}</h1>
+        <p>Deployment Readiness Briefing</p>
+    </header>
+
+    <div class="intro-grid">
+        <section class="intro-card">
+            <h2><i>📖</i> Overview</h2>
+            <p>{{ lab_what }}</p>
+        </section>
+
+        <section class="intro-card">
+            <h2><i>🔥</i> Critical Importance</h2>
+            <p>{{ lab_why }}</p>
+        </section>
+
+        <section class="intro-card">
+            <h2><i>🎓</i> Learning Objectives</h2>
+            <p>{{ lab_learn }}</p>
+        </section>
+
+        <section class="intro-card highlight">
+            <h2><i>✨</i> CADS Advantage</h2>
+            <p>{{ lab_platform_value }}</p>
+        </section>
+    </div>
+
+    <div style="margin-top: 60px; display: flex; gap: 20px; justify-content: center;">
+        <a href="/labs" class="btn btn-outline" style="padding: 16px 32px;">← Back to Labs</a>
+        <form action="/lab/{{ lab_id }}/select_mode" method="get">
+            <button type="submit" class="btn btn-primary" style="padding: 16px 64px; font-size: 18px;">Proceed to Setup →</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

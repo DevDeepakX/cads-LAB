@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADS — Available Labs</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .labs-hero { margin-bottom: 60px; text-align: left; }
+        .labs-hero h1 { font-size: 48px; }
+        .labs-hero p { margin: 0; color: var(--dim); }
+
+        .lab-card {
+            border: 1px solid var(--border);
+            padding: 40px;
+            background: rgba(102,126,234,0.02);
+            border-radius: 24px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            gap: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .lab-card:hover { transform: translateY(-10px); background: rgba(102,126,234,0.06); border-color: var(--cyan); }
+        .lab-card::after {
+            content: 'LAB-SEC'; position: absolute; bottom: 20px; right: 20px;
+            font-size: 40px; font-weight: 800; opacity: 0.05; letter-spacing: -2px; pointer-events: none;
+        }
+        .lab-card h3 { font-size: 30px; color: var(--green); margin-bottom: 8px; }
+        .lab-card p { font-size: 16px; color: var(--text); opacity: 0.7; line-height: 1.6; }
+        .lab-card .btn { margin-top: auto; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="labs-hero">
+        <h1 class="gradient-text">Laboratory Simulations</h1>
+        <p>Choose an environment to deploy your attack or defense workflows.</p>
+    </header>
+
+    <div class="card-grid">
+        <!-- S3 Lab -->
+        <article class="lab-card">
+            <div class="lab-tag">AWS Security</div>
+            <h3>Open S3 Bucket</h3>
+            <p>Master the discovery of misconfigured S3 buckets, understand access control risks, and apply remediation steps using the AWS CLI. Grounded in UNSW-NB15 patterns.</p>
+            <a href="/lab/s3" class="btn btn-primary" style="width: 100%;">DEPLOY LAB →</a>
+        </article>
+
+        <!-- Pwndora Lab -->
+        <article class="lab-card">
+            <div class="lab-tag">Web Defense</div>
+            <h3>PwnDora Challenge</h3>
+            <p>Venture into a simulated web vulnerability environment. Identify common web attack vectors like injection and cross-site scripting in a containerized web server.</p>
+            <a href="/lab/pwndora" class="btn btn-outline" style="width: 100%;">DEPLOY LAB →</a>
+        </article>
+
+        <!-- Network Recon Lab -->
+        <article class="lab-card">
+            <div class="lab-tag">Network Analysis</div>
+            <h3>Network Recon</h3>
+            <p>Practice stealthy reconnaissance techniques on simulated enterprise networks. Detect service fingerprinting attempts and map internal infrastructure.</p>
+            <a href="/lab/network" class="btn btn-outline" style="width: 100%;">DEPLOY LAB →</a>
+        </article>
+    </div>
+
+    <div style="margin-top: 60px; text-align: center;">
+        <a href="/" class="btn btn-outline" style="font-size: 13px; opacity: 0.6;">← Back to Home</a>
+    </div>
+</div>
+</body>
+</html>

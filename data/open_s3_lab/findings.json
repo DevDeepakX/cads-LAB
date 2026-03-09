@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "bucket_id": 1,
+    "object_id": null,
+    "title": "Bucket Publicly Listed",
+    "description": "open-lab-public bucket allows anonymous LIST operation",
+    "severity": "CRITICAL",
+    "reported_at": "2026-02-01T04:36:15.721815+00:00",
+    "resolved": 0
+  },
+  {
+    "id": 2,
+    "bucket_id": 1,
+    "object_id": null,
+    "title": "Public Read Access",
+    "description": "Multiple objects in bucket have public-read ACL",
+    "severity": "HIGH",
+    "reported_at": "2026-01-31T04:36:15.721831+00:00",
+    "resolved": 0
+  },
+  {
+    "id": 3,
+    "bucket_id": 3,
+    "object_id": null,
+    "title": "Permissive IAM Policy",
+    "description": "Bucket policy allows * principal on s3:*",
+    "severity": "CRITICAL",
+    "reported_at": "2026-01-30T04:36:15.721838+00:00",
+    "resolved": 0
+  },
+  {
+    "id": 4,
+    "bucket_id": null,
+    "object_id": null,
+    "title": "Exposed Credentials",
+    "description": "AWS access keys found in public objects",
+    "severity": "CRITICAL",
+    "reported_at": "2026-01-29T04:36:15.721845+00:00",
+    "resolved": 0
+  },
+  {
+    "id": 5,
+    "bucket_id": 4,
+    "object_id": null,
+    "title": "No Encryption",
+    "description": "Backup vault does not have server-side encryption enabled",
+    "severity": "HIGH",
+    "reported_at": "2026-01-28T04:36:15.721857+00:00",
+    "resolved": 0
+  }
+]

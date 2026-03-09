@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "name": "Nmap Scan",
+    "pattern": "nmap -sV [target]",
+    "hint": "Scan for services and versions",
+    "example": "nmap -sV 192.168.1.0/24",
+    "level": "Beginner",
+    "category": "Reconnaissance"
+  },
+  {
+    "id": 2,
+    "name": "Traceroute",
+    "pattern": "traceroute [target]",
+    "hint": "Trace network path to target",
+    "example": "traceroute 192.168.1.1",
+    "level": "Beginner",
+    "category": "Reconnaissance"
+  },
+  {
+    "id": 3,
+    "name": "ARP Scan",
+    "pattern": "arp-scan -l",
+    "hint": "Discover hosts on local network",
+    "example": "arp-scan -l --localnet",
+    "level": "Beginner",
+    "category": "Reconnaissance"
+  },
+  {
+    "id": 4,
+    "name": "DNS Enumeration",
+    "pattern": "dig axfr @[dns_server] [domain]",
+    "hint": "Perform DNS zone transfer",
+    "example": "dig axfr @ns1.example.com example.com",
+    "level": "Intermediate",
+    "category": "Reconnaissance"
+  },
+  {
+    "id": 5,
+    "name": "Service Enumeration",
+    "pattern": "nmap -sC -sV [target]",
+    "hint": "Detect running services",
+    "example": "nmap -sC -sV -p- 192.168.1.1",
+    "level": "Intermediate",
+    "category": "Reconnaissance"
+  },
+  {
+    "id": 6,
+    "name": "Vulnerability Scan",
+    "pattern": "nessus/openvas scan",
+    "hint": "Vulnerability assessment",
+    "example": "nessus-cli --scan vuln_scan 192.168.1.0/24",
+    "level": "Intermediate",
+    "category": "Scanning"
+  },
+  {
+    "id": 7,
+    "name": "Man-in-the-Middle",
+    "pattern": "ettercap -T arp",
+    "hint": "ARP spoofing attack",
+    "example": "ettercap -T arp:remote /192.168.1.1// /192.168.1.2//",
+    "level": "Advanced",
+    "category": "Attack"
+  },
+  {
+    "id": 8,
+    "name": "DDoS Attack",
+    "pattern": "hping3 --flood -S -p [port] [target]",
+    "hint": "Flood target with packets",
+    "example": "hping3 --flood -S -p 80 192.168.1.1",
+    "level": "Advanced",
+    "category": "Attack"
+  },
+  {
+    "id": 9,
+    "name": "Network Sniffing",
+    "pattern": "tcpdump -i eth0",
+    "hint": "Capture network traffic",
+    "example": "tcpdump -i eth0 -w capture.pcap",
+    "level": "Intermediate",
+    "category": "Analysis"
+  },
+  {
+    "id": 10,
+    "name": "Wireshark Analysis",
+    "pattern": "wireshark",
+    "hint": "Analyze captured traffic",
+    "example": "wireshark capture.pcap",
+    "level": "Intermediate",
+    "category": "Analysis"
+  },
+  {
+    "id": 11,
+    "name": "Nessus Full Audit",
+    "pattern": "nessus [full-audit]",
+    "hint": "Complete vulnerability assessment",
+    "example": "nessus --audit full 192.168.1.0/24",
+    "level": "Advanced",
+    "category": "Scanning"
+  },
+  {
+    "id": 12,
+    "name": "Packet Crafting",
+    "pattern": "scapy",
+    "hint": "Create custom packets",
+    "example": "python scapy_script.py",
+    "level": "Advanced",
+    "category": "Attack"
+  }
+]

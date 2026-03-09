@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADS — Mission Result</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .result-container {
+            max-width: 600px; margin: 0 auto; text-align: center;
+        }
+        .result-medal { font-size: 80px; margin-bottom: 24px; display: block; }
+        .result-card {
+            background: linear-gradient(135deg, var(--bg2), var(--bg3));
+            border: 2px solid var(--border); border-radius: 24px; padding: 48px 32px;
+            margin-bottom: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .score-value { font-size: 64px; color: var(--green); margin: 20px 0; font-weight: 800; }
+    </style>
+</head>
+<body>
+<div class="container result-container">
+    <header style="margin-bottom: 40px;">
+        <h1 class="gradient-text">Mission Summary</h1>
+        <p>Deployment terminated. Finalizing metrics.</p>
+    </header>
+
+    <div class="result-card">
+        <span class="result-medal">🏆</span>
+        <h2 style="color: var(--cyan); margin-bottom: 24px;">{{ result }}</h2>
+        <div class="score-value">{{ score }}</div>
+        <p style="color: var(--dim); font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px;">Total Strategy Score</p>
+        
+        <div style="display: flex; justify-content: center; gap: 40px; border-top: 1px solid var(--border); padding-top: 32px;">
+            <div>
+                <p style="font-size: 12px; color: var(--dim);">ATTEMPTS</p>
+                <p style="font-size: 24px; color: var(--text);">{{ attempts }}</p>
+            </div>
+            <div>
+                <p style="font-size: 12px; color: var(--dim);">LAB ID</p>
+                <p style="font-size: 24px; color: var(--text);">{{ session.get('lab_id','-') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 15px; justify-content: center;">
+        <a href="/labs" class="btn btn-primary" style="padding: 16px 48px;">Return to Hub</a>
+        <a href="/reset" class="btn btn-outline" style="padding: 16px 48px;">Reset Lab</a>
+    </div>
+</div>
+</body>
+</html>

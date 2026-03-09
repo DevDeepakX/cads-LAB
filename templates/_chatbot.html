@@ -1,0 +1,25 @@
+{# Chatbot partial: floating ghost icon + chat window #}
+<link rel="stylesheet" href="/static/chatbot.css">
+<div id="chatbot-root">
+    <button id="chatbot-toggle" aria-label="Open assistant">
+        <img src="/static/ghost.svg" alt="ghost" id="chatbot-ghost">
+    </button>
+    <div class="chatbot-label">Assistant</div>
+
+    <div id="chatbot-window" role="dialog" aria-hidden="true">
+        <div id="chatbot-header">
+            <div class="title">Lab Assistant</div>
+            <button id="chatbot-close" aria-label="Close">×</button>
+        </div>
+        <div id="chatbot-body">
+            <div id="chatbot-messages">
+                <div class="bot">Hi — I can help with this lab. Ask about commands, hints, or next steps.</div>
+            </div>
+            <form id="chatbot-form">
+                <input id="chatbot-input" placeholder="Ask about this lab (commands, hints)..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/static/chatbot.js"></script>

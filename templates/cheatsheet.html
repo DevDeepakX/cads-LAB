@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cheat Sheet</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container neon">
+    <header class="hero">
+      <h1>Cheat Sheet — Hints</h1>
+      <p class="tagline">Crack the AI bot in your selected mode</p>
+    </header>
+
+    <div class="hints-list">
+      {% if commands and commands|length > 0 %}
+        {% for cmd in commands %}
+          <div class="cmd">
+            <div class="cmd-title">{{ cmd.name }} <span class="badge">{{ cmd.mode }}</span></div>
+            <div class="cmd-pattern"><code>{{ cmd.pattern }}</code></div>
+            <div class="cmd-hint">{{ cmd.hint }}</div>
+            <div class="cmd-example small">Example: <code>{{ cmd.example }}</code></div>
+            <div class="cmd-howto small">How to: {{ cmd.howto }}</div>
+            <div style="margin-top:8px"><span class="badge">Level: {{ cmd.level or 'N/A' }}</span> <span class="badge">Category: {{ cmd.category or 'general' }}</span></div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="hint-item">Select a mode to view the cheat sheet, or visit Admin to manage commands.</div>
+      {% endif %}
+    </div>
+
+    <div class="controls">
+      <a href="/lab/s3"><button class="btn-primary">Back to Lab</button></a>
+      <a href="/admin/commands"><button class="btn-outline">Admin: Manage Commands</button></a>
+    </div>
+</div>
+</body>
+</html>

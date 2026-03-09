@@ -1,0 +1,1502 @@
+[
+  {
+    "id": 1,
+    "host_id": 16,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-08T04:39:44.739817+00:00"
+  },
+  {
+    "id": 2,
+    "host_id": 27,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-18T04:39:44.739848+00:00"
+  },
+  {
+    "id": 3,
+    "host_id": 42,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-18T04:39:44.739857+00:00"
+  },
+  {
+    "id": 4,
+    "host_id": 38,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-16T04:39:44.739864+00:00"
+  },
+  {
+    "id": 5,
+    "host_id": 40,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-25T04:39:44.739870+00:00"
+  },
+  {
+    "id": 6,
+    "host_id": 48,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-17T04:39:44.739876+00:00"
+  },
+  {
+    "id": 7,
+    "host_id": 4,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-20T04:39:44.739881+00:00"
+  },
+  {
+    "id": 8,
+    "host_id": 6,
+    "port": 5900,
+    "protocol": "tcp",
+    "service_name": "VNC",
+    "version": "VNC Server",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-19T04:39:44.739890+00:00"
+  },
+  {
+    "id": 9,
+    "host_id": 27,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-05T04:39:44.739896+00:00"
+  },
+  {
+    "id": 10,
+    "host_id": 4,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-18T04:39:44.739902+00:00"
+  },
+  {
+    "id": 11,
+    "host_id": 22,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-02-01T04:39:44.739908+00:00"
+  },
+  {
+    "id": 12,
+    "host_id": 43,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-27T04:39:44.739913+00:00"
+  },
+  {
+    "id": 13,
+    "host_id": 22,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-19T04:39:44.739919+00:00"
+  },
+  {
+    "id": 14,
+    "host_id": 46,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-29T04:39:44.739924+00:00"
+  },
+  {
+    "id": 15,
+    "host_id": 11,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-29T04:39:44.739929+00:00"
+  },
+  {
+    "id": 16,
+    "host_id": 39,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-22T04:39:44.739934+00:00"
+  },
+  {
+    "id": 17,
+    "host_id": 38,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-18T04:39:44.739939+00:00"
+  },
+  {
+    "id": 18,
+    "host_id": 42,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-18T04:39:44.739945+00:00"
+  },
+  {
+    "id": 19,
+    "host_id": 37,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-21T04:39:44.739955+00:00"
+  },
+  {
+    "id": 20,
+    "host_id": 15,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-11T04:39:44.739960+00:00"
+  },
+  {
+    "id": 21,
+    "host_id": 34,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-09T04:39:44.739965+00:00"
+  },
+  {
+    "id": 22,
+    "host_id": 6,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-30T04:39:44.739971+00:00"
+  },
+  {
+    "id": 23,
+    "host_id": 32,
+    "port": 5900,
+    "protocol": "tcp",
+    "service_name": "VNC",
+    "version": "VNC Server",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-13T04:39:44.739976+00:00"
+  },
+  {
+    "id": 24,
+    "host_id": 15,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-21T04:39:44.739986+00:00"
+  },
+  {
+    "id": 25,
+    "host_id": 40,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-06T04:39:44.739991+00:00"
+  },
+  {
+    "id": 26,
+    "host_id": 2,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-18T04:39:44.739996+00:00"
+  },
+  {
+    "id": 27,
+    "host_id": 13,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-30T04:39:44.740002+00:00"
+  },
+  {
+    "id": 28,
+    "host_id": 47,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-28T04:39:44.740008+00:00"
+  },
+  {
+    "id": 29,
+    "host_id": 8,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-23T04:39:44.740013+00:00"
+  },
+  {
+    "id": 30,
+    "host_id": 33,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-20T04:39:44.740018+00:00"
+  },
+  {
+    "id": 31,
+    "host_id": 32,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-23T04:39:44.740023+00:00"
+  },
+  {
+    "id": 32,
+    "host_id": 31,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-17T04:39:44.740028+00:00"
+  },
+  {
+    "id": 33,
+    "host_id": 36,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-20T04:39:44.740034+00:00"
+  },
+  {
+    "id": 34,
+    "host_id": 6,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-24T04:39:44.740040+00:00"
+  },
+  {
+    "id": 35,
+    "host_id": 20,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-30T04:39:44.740045+00:00"
+  },
+  {
+    "id": 36,
+    "host_id": 43,
+    "port": 5900,
+    "protocol": "tcp",
+    "service_name": "VNC",
+    "version": "VNC Server",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-17T04:39:44.740050+00:00"
+  },
+  {
+    "id": 37,
+    "host_id": 28,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-27T04:39:44.740056+00:00"
+  },
+  {
+    "id": 38,
+    "host_id": 37,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-30T04:39:44.740061+00:00"
+  },
+  {
+    "id": 39,
+    "host_id": 39,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-29T04:39:44.740069+00:00"
+  },
+  {
+    "id": 40,
+    "host_id": 44,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-08T04:39:44.740075+00:00"
+  },
+  {
+    "id": 41,
+    "host_id": 42,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-25T04:39:44.740081+00:00"
+  },
+  {
+    "id": 42,
+    "host_id": 14,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-05T04:39:44.740169+00:00"
+  },
+  {
+    "id": 43,
+    "host_id": 24,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-18T04:39:44.740238+00:00"
+  },
+  {
+    "id": 44,
+    "host_id": 24,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-22T04:39:44.740354+00:00"
+  },
+  {
+    "id": 45,
+    "host_id": 47,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-13T04:39:44.740394+00:00"
+  },
+  {
+    "id": 46,
+    "host_id": 8,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-02-02T04:39:44.740530+00:00"
+  },
+  {
+    "id": 47,
+    "host_id": 36,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-29T04:39:44.740574+00:00"
+  },
+  {
+    "id": 48,
+    "host_id": 40,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-25T04:39:44.740584+00:00"
+  },
+  {
+    "id": 49,
+    "host_id": 3,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-08T04:39:44.740590+00:00"
+  },
+  {
+    "id": 50,
+    "host_id": 23,
+    "port": 21,
+    "protocol": "tcp",
+    "service_name": "FTP",
+    "version": "vsftpd 3.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-23T04:39:44.740602+00:00"
+  },
+  {
+    "id": 51,
+    "host_id": 35,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-25T04:39:44.740608+00:00"
+  },
+  {
+    "id": 52,
+    "host_id": 1,
+    "port": 3389,
+    "protocol": "tcp",
+    "service_name": "RDP",
+    "version": "Windows RDP",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-05T04:39:44.740617+00:00"
+  },
+  {
+    "id": 53,
+    "host_id": 48,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-17T04:39:44.740624+00:00"
+  },
+  {
+    "id": 54,
+    "host_id": 15,
+    "port": 5900,
+    "protocol": "tcp",
+    "service_name": "VNC",
+    "version": "VNC Server",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-16T04:39:44.740631+00:00"
+  },
+  {
+    "id": 55,
+    "host_id": 26,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-19T04:39:44.740636+00:00"
+  },
+  {
+    "id": 56,
+    "host_id": 29,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-01T04:39:44.740642+00:00"
+  },
+  {
+    "id": 57,
+    "host_id": 38,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-28T04:39:44.740648+00:00"
+  },
+  {
+    "id": 58,
+    "host_id": 46,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-31T04:39:44.740653+00:00"
+  },
+  {
+    "id": 59,
+    "host_id": 1,
+    "port": 21,
+    "protocol": "tcp",
+    "service_name": "FTP",
+    "version": "vsftpd 3.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-24T04:39:44.740659+00:00"
+  },
+  {
+    "id": 60,
+    "host_id": 24,
+    "port": 443,
+    "protocol": "tcp",
+    "service_name": "HTTPS",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-29T04:39:44.740664+00:00"
+  },
+  {
+    "id": 61,
+    "host_id": 50,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-26T04:39:44.740670+00:00"
+  },
+  {
+    "id": 62,
+    "host_id": 13,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-30T04:39:44.740676+00:00"
+  },
+  {
+    "id": 63,
+    "host_id": 30,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-06T04:39:44.740682+00:00"
+  },
+  {
+    "id": 64,
+    "host_id": 17,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-10T04:39:44.740688+00:00"
+  },
+  {
+    "id": 65,
+    "host_id": 11,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-20T04:39:44.740694+00:00"
+  },
+  {
+    "id": 66,
+    "host_id": 49,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-11T04:39:44.740703+00:00"
+  },
+  {
+    "id": 67,
+    "host_id": 9,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-25T04:39:44.740710+00:00"
+  },
+  {
+    "id": 68,
+    "host_id": 7,
+    "port": 443,
+    "protocol": "tcp",
+    "service_name": "HTTPS",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-09T04:39:44.740715+00:00"
+  },
+  {
+    "id": 69,
+    "host_id": 19,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-08T04:39:44.740721+00:00"
+  },
+  {
+    "id": 70,
+    "host_id": 33,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-17T04:39:44.740726+00:00"
+  },
+  {
+    "id": 71,
+    "host_id": 29,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-13T04:39:44.740733+00:00"
+  },
+  {
+    "id": 72,
+    "host_id": 48,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-16T04:39:44.740739+00:00"
+  },
+  {
+    "id": 73,
+    "host_id": 5,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-09T04:39:44.740745+00:00"
+  },
+  {
+    "id": 74,
+    "host_id": 37,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-12T04:39:44.740751+00:00"
+  },
+  {
+    "id": 75,
+    "host_id": 36,
+    "port": 21,
+    "protocol": "tcp",
+    "service_name": "FTP",
+    "version": "vsftpd 3.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-12T04:39:44.740757+00:00"
+  },
+  {
+    "id": 76,
+    "host_id": 22,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-22T04:39:44.740762+00:00"
+  },
+  {
+    "id": 77,
+    "host_id": 20,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-16T04:39:44.740774+00:00"
+  },
+  {
+    "id": 78,
+    "host_id": 13,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-11T04:39:44.740783+00:00"
+  },
+  {
+    "id": 79,
+    "host_id": 32,
+    "port": 3389,
+    "protocol": "tcp",
+    "service_name": "RDP",
+    "version": "Windows RDP",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-04T04:39:44.740789+00:00"
+  },
+  {
+    "id": 80,
+    "host_id": 10,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-22T04:39:44.740795+00:00"
+  },
+  {
+    "id": 81,
+    "host_id": 43,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-27T04:39:44.740801+00:00"
+  },
+  {
+    "id": 82,
+    "host_id": 44,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-18T04:39:44.740806+00:00"
+  },
+  {
+    "id": 83,
+    "host_id": 28,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-09T04:39:44.740811+00:00"
+  },
+  {
+    "id": 84,
+    "host_id": 24,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-02-02T04:39:44.740818+00:00"
+  },
+  {
+    "id": 85,
+    "host_id": 4,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-10T04:39:44.740824+00:00"
+  },
+  {
+    "id": 86,
+    "host_id": 34,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-25T04:39:44.740830+00:00"
+  },
+  {
+    "id": 87,
+    "host_id": 28,
+    "port": 3389,
+    "protocol": "tcp",
+    "service_name": "RDP",
+    "version": "Windows RDP",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-18T04:39:44.740835+00:00"
+  },
+  {
+    "id": 88,
+    "host_id": 27,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-22T04:39:44.740841+00:00"
+  },
+  {
+    "id": 89,
+    "host_id": 33,
+    "port": 21,
+    "protocol": "tcp",
+    "service_name": "FTP",
+    "version": "vsftpd 3.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-20T04:39:44.740846+00:00"
+  },
+  {
+    "id": 90,
+    "host_id": 26,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-21T04:39:44.740852+00:00"
+  },
+  {
+    "id": 91,
+    "host_id": 33,
+    "port": 3389,
+    "protocol": "tcp",
+    "service_name": "RDP",
+    "version": "Windows RDP",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-21T04:39:44.740857+00:00"
+  },
+  {
+    "id": 92,
+    "host_id": 7,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-25T04:39:44.740863+00:00"
+  },
+  {
+    "id": 93,
+    "host_id": 42,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-29T04:39:44.740868+00:00"
+  },
+  {
+    "id": 94,
+    "host_id": 1,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-20T04:39:44.740874+00:00"
+  },
+  {
+    "id": 95,
+    "host_id": 34,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-04T04:39:44.740879+00:00"
+  },
+  {
+    "id": 96,
+    "host_id": 35,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-01T04:39:44.740884+00:00"
+  },
+  {
+    "id": 97,
+    "host_id": 48,
+    "port": 3389,
+    "protocol": "tcp",
+    "service_name": "RDP",
+    "version": "Windows RDP",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-28T04:39:44.740894+00:00"
+  },
+  {
+    "id": 98,
+    "host_id": 8,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-19T04:39:44.740900+00:00"
+  },
+  {
+    "id": 99,
+    "host_id": 20,
+    "port": 443,
+    "protocol": "tcp",
+    "service_name": "HTTPS",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-31T04:39:44.740905+00:00"
+  },
+  {
+    "id": 100,
+    "host_id": 23,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-04T04:39:44.740911+00:00"
+  },
+  {
+    "id": 101,
+    "host_id": 33,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-19T04:39:44.740919+00:00"
+  },
+  {
+    "id": 102,
+    "host_id": 5,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-08T04:39:44.740925+00:00"
+  },
+  {
+    "id": 103,
+    "host_id": 23,
+    "port": 443,
+    "protocol": "tcp",
+    "service_name": "HTTPS",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-07T04:39:44.740933+00:00"
+  },
+  {
+    "id": 104,
+    "host_id": 9,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-15T04:39:44.740939+00:00"
+  },
+  {
+    "id": 105,
+    "host_id": 34,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-13T04:39:44.740945+00:00"
+  },
+  {
+    "id": 106,
+    "host_id": 5,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-30T04:39:44.740950+00:00"
+  },
+  {
+    "id": 107,
+    "host_id": 41,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-04T04:39:44.740956+00:00"
+  },
+  {
+    "id": 108,
+    "host_id": 17,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-22T04:39:44.740961+00:00"
+  },
+  {
+    "id": 109,
+    "host_id": 4,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-04T04:39:44.740969+00:00"
+  },
+  {
+    "id": 110,
+    "host_id": 35,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-11T04:39:44.740977+00:00"
+  },
+  {
+    "id": 111,
+    "host_id": 41,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-17T04:39:44.740982+00:00"
+  },
+  {
+    "id": 112,
+    "host_id": 37,
+    "port": 25,
+    "protocol": "tcp",
+    "service_name": "SMTP",
+    "version": "Postfix 2.11",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-16T04:39:44.740988+00:00"
+  },
+  {
+    "id": 113,
+    "host_id": 23,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-15T04:39:44.740993+00:00"
+  },
+  {
+    "id": 114,
+    "host_id": 38,
+    "port": 3389,
+    "protocol": "tcp",
+    "service_name": "RDP",
+    "version": "Windows RDP",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-16T04:39:44.740999+00:00"
+  },
+  {
+    "id": 115,
+    "host_id": 35,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-18T04:39:44.741005+00:00"
+  },
+  {
+    "id": 116,
+    "host_id": 25,
+    "port": 21,
+    "protocol": "tcp",
+    "service_name": "FTP",
+    "version": "vsftpd 3.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-07T04:39:44.741090+00:00"
+  },
+  {
+    "id": 117,
+    "host_id": 40,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-24T04:39:44.741123+00:00"
+  },
+  {
+    "id": 118,
+    "host_id": 22,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-19T04:39:44.741132+00:00"
+  },
+  {
+    "id": 119,
+    "host_id": 21,
+    "port": 80,
+    "protocol": "tcp",
+    "service_name": "HTTP",
+    "version": "Apache 2.4",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-07T04:39:44.741138+00:00"
+  },
+  {
+    "id": 120,
+    "host_id": 29,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-07T04:39:44.741144+00:00"
+  },
+  {
+    "id": 121,
+    "host_id": 12,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-09T04:39:44.741150+00:00"
+  },
+  {
+    "id": 122,
+    "host_id": 9,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-10T04:39:44.741156+00:00"
+  },
+  {
+    "id": 123,
+    "host_id": 8,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-03T04:39:44.741162+00:00"
+  },
+  {
+    "id": 124,
+    "host_id": 27,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-10T04:39:44.741170+00:00"
+  },
+  {
+    "id": 125,
+    "host_id": 33,
+    "port": 53,
+    "protocol": "udp",
+    "service_name": "DNS",
+    "version": "BIND 9.11",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-02T04:39:44.741176+00:00"
+  },
+  {
+    "id": 126,
+    "host_id": 22,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-02T04:39:44.741181+00:00"
+  },
+  {
+    "id": 127,
+    "host_id": 10,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-22T04:39:44.741187+00:00"
+  },
+  {
+    "id": 128,
+    "host_id": 49,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-18T04:39:44.741192+00:00"
+  },
+  {
+    "id": 129,
+    "host_id": 19,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-06T04:39:44.741197+00:00"
+  },
+  {
+    "id": 130,
+    "host_id": 17,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-06T04:39:44.741209+00:00"
+  },
+  {
+    "id": 131,
+    "host_id": 32,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-28T04:39:44.741214+00:00"
+  },
+  {
+    "id": 132,
+    "host_id": 47,
+    "port": 23,
+    "protocol": "tcp",
+    "service_name": "Telnet",
+    "version": "Linux Telnet",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-09T04:39:44.741219+00:00"
+  },
+  {
+    "id": 133,
+    "host_id": 36,
+    "port": 443,
+    "protocol": "tcp",
+    "service_name": "HTTPS",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-17T04:39:44.741225+00:00"
+  },
+  {
+    "id": 134,
+    "host_id": 31,
+    "port": 21,
+    "protocol": "tcp",
+    "service_name": "FTP",
+    "version": "vsftpd 3.0",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-04T04:39:44.741230+00:00"
+  },
+  {
+    "id": 135,
+    "host_id": 28,
+    "port": 21,
+    "protocol": "tcp",
+    "service_name": "FTP",
+    "version": "vsftpd 3.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-16T04:39:44.741236+00:00"
+  },
+  {
+    "id": 136,
+    "host_id": 33,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-03T04:39:44.741243+00:00"
+  },
+  {
+    "id": 137,
+    "host_id": 10,
+    "port": 5900,
+    "protocol": "tcp",
+    "service_name": "VNC",
+    "version": "VNC Server",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-04T04:39:44.741248+00:00"
+  },
+  {
+    "id": 138,
+    "host_id": 3,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-15T04:39:44.741253+00:00"
+  },
+  {
+    "id": 139,
+    "host_id": 47,
+    "port": 22,
+    "protocol": "tcp",
+    "service_name": "SSH",
+    "version": "OpenSSH 7.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-04T04:39:44.741259+00:00"
+  },
+  {
+    "id": 140,
+    "host_id": 23,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-25T04:39:44.741264+00:00"
+  },
+  {
+    "id": 141,
+    "host_id": 18,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-03T04:39:44.741269+00:00"
+  },
+  {
+    "id": 142,
+    "host_id": 36,
+    "port": 5900,
+    "protocol": "tcp",
+    "service_name": "VNC",
+    "version": "VNC Server",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-15T04:39:44.741277+00:00"
+  },
+  {
+    "id": 143,
+    "host_id": 30,
+    "port": 443,
+    "protocol": "tcp",
+    "service_name": "HTTPS",
+    "version": "Apache 2.4",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-15T04:39:44.741283+00:00"
+  },
+  {
+    "id": 144,
+    "host_id": 19,
+    "port": 5432,
+    "protocol": "tcp",
+    "service_name": "PostgreSQL",
+    "version": "PostgreSQL 10",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-27T04:39:44.741288+00:00"
+  },
+  {
+    "id": 145,
+    "host_id": 10,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-28T04:39:44.741293+00:00"
+  },
+  {
+    "id": 146,
+    "host_id": 49,
+    "port": 9200,
+    "protocol": "tcp",
+    "service_name": "Elasticsearch",
+    "version": "Elasticsearch 6.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2026-01-08T04:39:44.741298+00:00"
+  },
+  {
+    "id": 147,
+    "host_id": 50,
+    "port": 3306,
+    "protocol": "tcp",
+    "service_name": "MySQL",
+    "version": "MySQL 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-27T04:39:44.741304+00:00"
+  },
+  {
+    "id": 148,
+    "host_id": 5,
+    "port": 27017,
+    "protocol": "tcp",
+    "service_name": "MongoDB",
+    "version": "MongoDB 3.6",
+    "is_vulnerable": 0,
+    "discovered_at": "2026-01-27T04:39:44.741309+00:00"
+  },
+  {
+    "id": 149,
+    "host_id": 5,
+    "port": 6379,
+    "protocol": "tcp",
+    "service_name": "Redis",
+    "version": "Redis 4.0",
+    "is_vulnerable": 1,
+    "discovered_at": "2025-12-10T04:39:44.741314+00:00"
+  },
+  {
+    "id": 150,
+    "host_id": 49,
+    "port": 161,
+    "protocol": "udp",
+    "service_name": "SNMP",
+    "version": "NET-SNMP 5.7",
+    "is_vulnerable": 0,
+    "discovered_at": "2025-12-14T04:39:44.741322+00:00"
+  }
+]

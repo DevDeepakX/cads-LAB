@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Command Terminal</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+
+<h2>Cloud Security Terminal</h2>
+
+<div class="terminal-box" id="terminalBox">
+        
+</div>
+        <div class="row">
+            <div class="col card">
+                <label class="muted">Command Console</label>
+                <form method="post" id="cmdForm" class="controls">
+                        <input id="cmdInput" type="text" name="command" autofocus placeholder="Type command here (e.g. aws s3 ls)" style="flex:1;">
+                        <button type="submit">Run Command</button>
+                        <a href="/reset"><button type="button">Reset Lab</button></a>
+                        <a href="/logs"><button type="button">View Logs</button></a>
+                </form>
+
+                <div class="muted">Tip: Use reconnaissance commands first, then apply mitigations when needed.</div>
+            </div>
+
+            <div class="col card">
+                <h3>Forensic Timeline</h3>
+                <div id="timeline" style="max-height:320px;overflow:auto;padding:6px"></div>
+            </div>
+        </div>
+
+<script>
+const terminalBox = document.getElementById('terminalBox');
+function scrollTerminal(){ terminalBox.scrollTop = terminalBox.scrollHeight; }
+scrollTerminal();
+
+async function fetchLogs(){
+    try{
+        const res = await fetch('/api/logs');
+        const data = await res.json();
+        const el = document.getElementById('timeline');
+        el.innerHTML = '';
+        (data.events || []).forEach(e=>{
+            const p = document.createElement('p'); p.className='log';
+            p.textContent = `${e.timestamp} — ${e.event} — ${e.source_ip} — ${e.action}`;
+            el.appendChild(p);
+        });
+    }catch(err){ console.warn(err); }
+}
+
+setInterval(fetchLogs, 2000);
+fetchLogs();
+
+// auto-focus and scroll terminal on submit
+document.getElementById('cmdForm').addEventListener('submit', ()=> setTimeout(()=>{ scrollTerminal(); fetchLogs(); }, 200));
+</script>
+
+</div>
+</body>
+</html>

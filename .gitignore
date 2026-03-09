@@ -1,0 +1,105 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environment Variables (SENSITIVE - NEVER COMMIT!)
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Cache
+.cache/
+*.cache
+
+# Database (if using local SQLite)
+*.db
+database.db
+*.sqlite
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Chatbot specific
+chatbot_cache/
+api_responses/
+
+# Dataset
+archive (1).zip
+*.zip
+*.rar
+*.7z
+*.iso
+*.tar
+*.csv
+
+node_modules/
+venv/
+*.zip
+*.exe
+*.iso
+*.rar
+*.7z
+*.mp4
+*.dataset
+*.log
+__pycache__/
+dist/
+build/

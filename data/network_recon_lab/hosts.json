@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "ip_address": "192.168.1.1",
+    "hostname": "host-000.lab.local",
+    "os_type": "Linux",
+    "is_active": 0,
+    "discovered_at": "2026-01-10T04:39:44.738107+00:00"
+  },
+  {
+    "id": 2,
+    "ip_address": "192.168.1.2",
+    "hostname": "host-001.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-26T04:39:44.738151+00:00"
+  },
+  {
+    "id": 3,
+    "ip_address": "192.168.1.3",
+    "hostname": "host-002.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-12T04:39:44.738163+00:00"
+  },
+  {
+    "id": 4,
+    "ip_address": "192.168.1.4",
+    "hostname": "host-003.lab.local",
+    "os_type": "Linux",
+    "is_active": 1,
+    "discovered_at": "2026-02-01T04:39:44.738171+00:00"
+  },
+  {
+    "id": 5,
+    "ip_address": "192.168.1.5",
+    "hostname": "host-004.lab.local",
+    "os_type": "Linux",
+    "is_active": 0,
+    "discovered_at": "2026-01-27T04:39:44.738178+00:00"
+  },
+  {
+    "id": 6,
+    "ip_address": "192.168.1.6",
+    "hostname": "host-005.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-16T04:39:44.738186+00:00"
+  },
+  {
+    "id": 7,
+    "ip_address": "192.168.1.7",
+    "hostname": "host-006.lab.local",
+    "os_type": "Windows",
+    "is_active": 1,
+    "discovered_at": "2026-01-26T04:39:44.738192+00:00"
+  },
+  {
+    "id": 8,
+    "ip_address": "192.168.1.8",
+    "hostname": "host-007.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-08T04:39:44.738263+00:00"
+  },
+  {
+    "id": 9,
+    "ip_address": "192.168.1.9",
+    "hostname": "host-008.lab.local",
+    "os_type": "Linux",
+    "is_active": 0,
+    "discovered_at": "2026-01-11T04:39:44.738286+00:00"
+  },
+  {
+    "id": 10,
+    "ip_address": "192.168.1.10",
+    "hostname": "host-009.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-25T04:39:44.738294+00:00"
+  },
+  {
+    "id": 11,
+    "ip_address": "192.168.1.11",
+    "hostname": "host-010.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-03T04:39:44.738300+00:00"
+  },
+  {
+    "id": 12,
+    "ip_address": "192.168.1.12",
+    "hostname": "host-011.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-31T04:39:44.738307+00:00"
+  },
+  {
+    "id": 13,
+    "ip_address": "192.168.1.13",
+    "hostname": "host-012.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-22T04:39:44.738313+00:00"
+  },
+  {
+    "id": 14,
+    "ip_address": "192.168.1.14",
+    "hostname": "host-013.lab.local",
+    "os_type": "macOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-08T04:39:44.738328+00:00"
+  },
+  {
+    "id": 15,
+    "ip_address": "192.168.1.15",
+    "hostname": "host-014.lab.local",
+    "os_type": "Linux",
+    "is_active": 1,
+    "discovered_at": "2026-01-16T04:39:44.738334+00:00"
+  },
+  {
+    "id": 16,
+    "ip_address": "192.168.1.16",
+    "hostname": "host-015.lab.local",
+    "os_type": "Linux",
+    "is_active": 1,
+    "discovered_at": "2026-01-31T04:39:44.738340+00:00"
+  },
+  {
+    "id": 17,
+    "ip_address": "192.168.1.17",
+    "hostname": "host-016.lab.local",
+    "os_type": "macOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-15T04:39:44.738346+00:00"
+  },
+  {
+    "id": 18,
+    "ip_address": "192.168.1.18",
+    "hostname": "host-017.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-02-01T04:39:44.738352+00:00"
+  },
+  {
+    "id": 19,
+    "ip_address": "192.168.1.19",
+    "hostname": "host-018.lab.local",
+    "os_type": "Windows",
+    "is_active": 1,
+    "discovered_at": "2026-01-31T04:39:44.738358+00:00"
+  },
+  {
+    "id": 20,
+    "ip_address": "192.168.1.20",
+    "hostname": "host-019.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-21T04:39:44.738364+00:00"
+  },
+  {
+    "id": 21,
+    "ip_address": "192.168.1.21",
+    "hostname": "host-020.lab.local",
+    "os_type": "macOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-13T04:39:44.738370+00:00"
+  },
+  {
+    "id": 22,
+    "ip_address": "192.168.1.22",
+    "hostname": "host-021.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-22T04:39:44.738376+00:00"
+  },
+  {
+    "id": 23,
+    "ip_address": "192.168.1.23",
+    "hostname": "host-022.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-12T04:39:44.738382+00:00"
+  },
+  {
+    "id": 24,
+    "ip_address": "192.168.1.24",
+    "hostname": "host-023.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-14T04:39:44.738387+00:00"
+  },
+  {
+    "id": 25,
+    "ip_address": "192.168.1.25",
+    "hostname": "host-024.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-28T04:39:44.738394+00:00"
+  },
+  {
+    "id": 26,
+    "ip_address": "192.168.1.26",
+    "hostname": "host-025.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-25T04:39:44.738404+00:00"
+  },
+  {
+    "id": 27,
+    "ip_address": "192.168.1.27",
+    "hostname": "host-026.lab.local",
+    "os_type": "Windows",
+    "is_active": 1,
+    "discovered_at": "2026-01-07T04:39:44.738411+00:00"
+  },
+  {
+    "id": 28,
+    "ip_address": "192.168.1.28",
+    "hostname": "host-027.lab.local",
+    "os_type": "Linux",
+    "is_active": 0,
+    "discovered_at": "2026-01-07T04:39:44.738417+00:00"
+  },
+  {
+    "id": 29,
+    "ip_address": "192.168.1.29",
+    "hostname": "host-028.lab.local",
+    "os_type": "Linux",
+    "is_active": 1,
+    "discovered_at": "2026-01-21T04:39:44.738423+00:00"
+  },
+  {
+    "id": 30,
+    "ip_address": "192.168.1.30",
+    "hostname": "host-029.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-27T04:39:44.738428+00:00"
+  },
+  {
+    "id": 31,
+    "ip_address": "192.168.1.31",
+    "hostname": "host-030.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-13T04:39:44.738434+00:00"
+  },
+  {
+    "id": 32,
+    "ip_address": "192.168.1.32",
+    "hostname": "host-031.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-05T04:39:44.738440+00:00"
+  },
+  {
+    "id": 33,
+    "ip_address": "192.168.1.33",
+    "hostname": "host-032.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-25T04:39:44.738446+00:00"
+  },
+  {
+    "id": 34,
+    "ip_address": "192.168.1.34",
+    "hostname": "host-033.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-10T04:39:44.738452+00:00"
+  },
+  {
+    "id": 35,
+    "ip_address": "192.168.1.35",
+    "hostname": "host-034.lab.local",
+    "os_type": "macOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-05T04:39:44.738457+00:00"
+  },
+  {
+    "id": 36,
+    "ip_address": "192.168.1.36",
+    "hostname": "host-035.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-26T04:39:44.738465+00:00"
+  },
+  {
+    "id": 37,
+    "ip_address": "192.168.1.37",
+    "hostname": "host-036.lab.local",
+    "os_type": "Windows",
+    "is_active": 1,
+    "discovered_at": "2026-01-31T04:39:44.738472+00:00"
+  },
+  {
+    "id": 38,
+    "ip_address": "192.168.1.38",
+    "hostname": "host-037.lab.local",
+    "os_type": "Linux",
+    "is_active": 0,
+    "discovered_at": "2026-01-29T04:39:44.738478+00:00"
+  },
+  {
+    "id": 39,
+    "ip_address": "192.168.1.39",
+    "hostname": "host-038.lab.local",
+    "os_type": "Windows",
+    "is_active": 1,
+    "discovered_at": "2026-01-14T04:39:44.738483+00:00"
+  },
+  {
+    "id": 40,
+    "ip_address": "192.168.1.40",
+    "hostname": "host-039.lab.local",
+    "os_type": "Linux",
+    "is_active": 1,
+    "discovered_at": "2026-01-21T04:39:44.738489+00:00"
+  },
+  {
+    "id": 41,
+    "ip_address": "192.168.1.41",
+    "hostname": "host-040.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-16T04:39:44.738495+00:00"
+  },
+  {
+    "id": 42,
+    "ip_address": "192.168.1.42",
+    "hostname": "host-041.lab.local",
+    "os_type": "Linux",
+    "is_active": 0,
+    "discovered_at": "2026-01-12T04:39:44.738502+00:00"
+  },
+  {
+    "id": 43,
+    "ip_address": "192.168.1.43",
+    "hostname": "host-042.lab.local",
+    "os_type": "macOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-30T04:39:44.738507+00:00"
+  },
+  {
+    "id": 44,
+    "ip_address": "192.168.1.44",
+    "hostname": "host-043.lab.local",
+    "os_type": "macOS",
+    "is_active": 1,
+    "discovered_at": "2026-01-28T04:39:44.738513+00:00"
+  },
+  {
+    "id": 45,
+    "ip_address": "192.168.1.45",
+    "hostname": "host-044.lab.local",
+    "os_type": "RouterOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-03T04:39:44.738518+00:00"
+  },
+  {
+    "id": 46,
+    "ip_address": "192.168.1.46",
+    "hostname": "host-045.lab.local",
+    "os_type": "macOS",
+    "is_active": 0,
+    "discovered_at": "2026-01-17T04:39:44.738524+00:00"
+  },
+  {
+    "id": 47,
+    "ip_address": "192.168.1.47",
+    "hostname": "host-046.lab.local",
+    "os_type": "Linux",
+    "is_active": 1,
+    "discovered_at": "2026-01-07T04:39:44.738530+00:00"
+  },
+  {
+    "id": 48,
+    "ip_address": "192.168.1.48",
+    "hostname": "host-047.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-22T04:39:44.738536+00:00"
+  },
+  {
+    "id": 49,
+    "ip_address": "192.168.1.49",
+    "hostname": "host-048.lab.local",
+    "os_type": "Windows",
+    "is_active": 0,
+    "discovered_at": "2026-01-14T04:39:44.738542+00:00"
+  },
+  {
+    "id": 50,
+    "ip_address": "192.168.1.50",
+    "hostname": "host-049.lab.local",
+    "os_type": "macOS",
+    "is_active": 1,
+    "discovered_at": "2026-02-02T04:39:44.738547+00:00"
+  }
+]

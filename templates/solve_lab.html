@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Solve Lab</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>Defense Console</h2>
+
+    <form action="/result" method="post">
+        <p>Select the mitigation you want to apply:</p>
+
+        <input type="radio" name="answer" value="public_bucket" id="opt1"> <label for="opt1">Enable Block Public Access</label><br>
+        <input type="radio" name="answer" value="ignore" id="opt2"> <label for="opt2">Ignore Event</label><br>
+        <input type="radio" name="answer" value="delete" id="opt3"> <label for="opt3">Delete Bucket (simulated)</label><br>
+
+        <br>
+        <button type="submit">Apply Mitigation</button>
+    </form>
+</div>
+</body>
+</html>

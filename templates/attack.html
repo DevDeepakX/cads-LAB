@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attack Phase</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+
+    <h2>Attack Phase – Simulated</h2>
+
+    <div class="terminal-box">
+        <p class="prompt">scan_target --resource s3</p>
+        <p class="log">Bucket found: monish-s3-lab</p>
+        <p class="log warning">Access Level: PUBLIC</p>
+
+        <br>
+
+        <p class="prompt">exploit --read-object</p>
+        <p class="log warning">Unauthorized GetObject request sent</p>
+        <p class="log">Object accessed: test.txt</p>
+        <p class="log">Attack simulation completed</p>
+    </div>
+
+    <a href="/logs">
+        <button>VIEW GENERATED LOGS</button>
+    </a>
+
+</div>
+</body>
+</html>

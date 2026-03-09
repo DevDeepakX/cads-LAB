@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>S3 Lab</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>Lab: Open S3 Bucket</h2>
+
+        <div class="row">
+            <div class="col card">
+                <h3>Overview</h3>
+                <p class="prompt">scan_bucket --access public</p>
+                <p class="log warning">⚠ Bucket is PUBLIC</p>
+                <p class="log">Unauthorized access logged</p>
+                <a href="/terminal"><button>Open Terminal</button></a>
+            </div>
+
+            <div class="col card">
+                <h3>Choose Mode</h3>
+                <form action="/select_mode" method="post" class="controls">
+                    <button name="mode" value="attack" type="submit">Attack Mode — You Attack</button>
+                    <button name="mode" value="defense" type="submit">Defense Mode — You Defend</button>
+                </form>
+                <p class="muted">Choose a training mode. The system will simulate an AI opponent.</p>
+                <a href="/logs"><button>View Logs</button></a>
+            </div>
+        </div>
+        <div style="margin-top:12px">
+            <a href="/cheatsheet"><button>CHEAT SHEET</button></a>
+        </div>
+
+</body>
+</html>

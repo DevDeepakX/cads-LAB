@@ -1,0 +1,578 @@
+{
+  "dataset": "UNSW-NB15 Network Intrusion Detection Dataset",
+  "total_records": 257673,
+  "attack_summary": {
+    "Normal": {
+      "count": 93000,
+      "pct": 36.09
+    },
+    "Generic": {
+      "count": 58871,
+      "pct": 22.85
+    },
+    "Exploits": {
+      "count": 44525,
+      "pct": 17.28
+    },
+    "Fuzzers": {
+      "count": 24246,
+      "pct": 9.41
+    },
+    "DoS": {
+      "count": 16353,
+      "pct": 6.35
+    },
+    "Reconnaissance": {
+      "count": 13987,
+      "pct": 5.43
+    },
+    "Analysis": {
+      "count": 2677,
+      "pct": 1.04
+    },
+    "Backdoor": {
+      "count": 2329,
+      "pct": 0.9
+    },
+    "Shellcode": {
+      "count": 1511,
+      "pct": 0.59
+    },
+    "Worms": {
+      "count": 174,
+      "pct": 0.07
+    }
+  },
+  "category_profiles": {
+    "Normal": {
+      "dur": 1.0154,
+      "sbytes": 4092.4444,
+      "dbytes": 26138.1974,
+      "rate": 19588.2891,
+      "spkts": 27.5632,
+      "dpkts": 33.0279,
+      "sloss": 4.7298,
+      "dloss": 12.1718,
+      "sjit": 6491.7852,
+      "djit": 837.5594,
+      "sload": 29768114.0,
+      "dload": 1788697.5,
+      "top_proto": "tcp",
+      "top_service": "-",
+      "top_state": "FIN"
+    },
+    "Backdoor": {
+      "dur": 2.2246,
+      "sbytes": 1520.8617,
+      "dbytes": 295.2941,
+      "rate": 149210.0469,
+      "spkts": 6.7673,
+      "dpkts": 1.459,
+      "sloss": 0.3272,
+      "dloss": 0.3598,
+      "sjit": 904.6962,
+      "djit": 44.7222,
+      "sload": 120396992.0,
+      "dload": 2573.6067,
+      "top_proto": "unas",
+      "top_service": "-",
+      "top_state": "INT"
+    },
+    "Analysis": {
+      "dur": 1.4169,
+      "sbytes": 839.6451,
+      "dbytes": 296.1845,
+      "rate": 147808.3281,
+      "spkts": 5.3549,
+      "dpkts": 2.1233,
+      "sloss": 0.4882,
+      "dloss": 0.492,
+      "sjit": 11397.9883,
+      "djit": 381.4795,
+      "sload": 117520368.0,
+      "dload": 2530.4812,
+      "top_proto": "unas",
+      "top_service": "-",
+      "top_state": "INT"
+    },
+    "Fuzzers": {
+      "dur": 2.6739,
+      "sbytes": 6764.3026,
+      "dbytes": 518.7721,
+      "rate": 67276.1562,
+      "spkts": 13.7648,
+      "dpkts": 6.0957,
+      "sloss": 3.8636,
+      "dloss": 1.1526,
+      "sjit": 21597.8242,
+      "djit": 846.0694,
+      "sload": 127693040.0,
+      "dload": 3221.3445,
+      "top_proto": "tcp",
+      "top_service": "-",
+      "top_state": "FIN"
+    },
+    "Shellcode": {
+      "dur": 0.3629,
+      "sbytes": 532.8352,
+      "dbytes": 146.3997,
+      "rate": 99145.5703,
+      "spkts": 5.9649,
+      "dpkts": 3.2892,
+      "sloss": 0.9921,
+      "dloss": 0.4964,
+      "sjit": 2348.0623,
+      "djit": 88.4211,
+      "sload": 130465112.0,
+      "dload": 2374.1472,
+      "top_proto": "udp",
+      "top_service": "-",
+      "top_state": "INT"
+    },
+    "Reconnaissance": {
+      "dur": 1.005,
+      "sbytes": 751.3813,
+      "dbytes": 1797.0892,
+      "rate": 99718.7266,
+      "spkts": 7.0346,
+      "dpkts": 4.9838,
+      "sloss": 0.9982,
+      "dloss": 1.1012,
+      "sjit": 3509.4766,
+      "djit": 107.3624,
+      "sload": 70491432.0,
+      "dload": 2425.5742,
+      "top_proto": "tcp",
+      "top_service": "-",
+      "top_state": "FIN"
+    },
+    "Exploits": {
+      "dur": 2.1229,
+      "sbytes": 29655.0041,
+      "dbytes": 17748.0419,
+      "rate": 67962.7109,
+      "spkts": 33.962,
+      "dpkts": 23.3759,
+      "sloss": 12.8392,
+      "dloss": 8.644,
+      "sjit": 3606.613,
+      "djit": 1009.459,
+      "sload": 61165712.0,
+      "dload": 58910.4375,
+      "top_proto": "tcp",
+      "top_service": "-",
+      "top_state": "FIN"
+    },
+    "DoS": {
+      "dur": 2.4488,
+      "sbytes": 18360.7938,
+      "dbytes": 21747.1337,
+      "rate": 146165.9062,
+      "spkts": 24.1173,
+      "dpkts": 21.2523,
+      "sloss": 7.8033,
+      "dloss": 8.4776,
+      "sjit": 942.9872,
+      "djit": 118.6085,
+      "sload": 123352336.0,
+      "dload": 17008.25,
+      "top_proto": "unas",
+      "top_service": "-",
+      "top_state": "INT"
+    },
+    "Worms": {
+      "dur": 1.3333,
+      "sbytes": 2255.7759,
+      "dbytes": 76965.4655,
+      "rate": 20873.6191,
+      "spkts": 18.2184,
+      "dpkts": 62.931,
+      "sloss": 2.0115,
+      "dloss": 29.477,
+      "sjit": 4197.4312,
+      "djit": 397.3317,
+      "sload": 72698648.0,
+      "dload": 132759.3594,
+      "top_proto": "tcp",
+      "top_service": "http",
+      "top_state": "FIN"
+    },
+    "Generic": {
+      "dur": 0.0612,
+      "sbytes": 446.289,
+      "dbytes": 1319.714,
+      "rate": 209833.1875,
+      "spkts": 2.5768,
+      "dpkts": 1.1599,
+      "sloss": 0.1553,
+      "dloss": 0.5231,
+      "sjit": 119.5731,
+      "djit": 32.4115,
+      "sload": 98488840.0,
+      "dload": 3441.1467,
+      "top_proto": "udp",
+      "top_service": "dns",
+      "top_state": "INT"
+    }
+  },
+  "attack_descriptions": {
+    "Normal": {
+      "description": "Legitimate network traffic with normal behavioral patterns.",
+      "indicators": [
+        "Stable connection rates",
+        "Expected packet sizes",
+        "Normal session durations"
+      ],
+      "mitigations": [
+        "Baseline monitoring",
+        "Anomaly detection systems"
+      ]
+    },
+    "Generic": {
+      "description": "Generic attack technique not fitting a specific category — often brute-force or protocol abuse.",
+      "indicators": [
+        "High packet rates",
+        "Unusual flag combinations",
+        "Repeated connection attempts"
+      ],
+      "commands": [
+        "nmap -sS <target>",
+        "hydra -l admin -P passwords.txt <target>"
+      ],
+      "mitigations": [
+        "Rate limiting",
+        "IP blocklisting",
+        "IDS rules for unusual flag patterns"
+      ],
+      "defense_commands": [
+        "iptables -A INPUT -m limit --limit 10/min -j ACCEPT",
+        "fail2ban-client status"
+      ]
+    },
+    "Exploits": {
+      "description": "Attacks exploiting known software vulnerabilities (CVEs) for remote code execution or privilege escalation.",
+      "indicators": [
+        "Unexpected payloads in traffic",
+        "Connections to unusual ports",
+        "Large spike in bytes sent to service"
+      ],
+      "commands": [
+        "msfconsole",
+        "searchsploit <service>",
+        "exploit/multi/handler"
+      ],
+      "mitigations": [
+        "Patch management",
+        "WAF deployment",
+        "Service version hardening"
+      ],
+      "defense_commands": [
+        "dpkg -l | grep <package>",
+        "apt-get update && apt-get upgrade",
+        "ufw enable"
+      ]
+    },
+    "Fuzzers": {
+      "description": "Automated input fuzzing to discover vulnerabilities by sending malformed or random data.",
+      "indicators": [
+        "High volume of malformed requests",
+        "Elevated error rates",
+        "Connection resets"
+      ],
+      "commands": [
+        "wfuzz -c -z file,wordlist.txt http://target/FUZZ",
+        "ffuf -w wordlist.txt -u http://target/FUZZ"
+      ],
+      "mitigations": [
+        "Input validation",
+        "Web application firewall",
+        "Error handling hardening"
+      ],
+      "defense_commands": [
+        "grep '400\\|500' /var/log/apache2/access.log | wc -l",
+        "fail2ban-client status"
+      ]
+    },
+    "DoS": {
+      "description": "Denial of Service attacks that overwhelm target resources to cause unavailability.",
+      "indicators": [
+        "Sudden traffic spike",
+        "High SYN packet rate",
+        "Server CPU at 100%",
+        "Connection timeouts"
+      ],
+      "commands": [
+        "hping3 -S --flood -V -p 80 <target>",
+        "slowhttptest -c 500 -H -g -o test -i 10 -r 200 -t GET -u http://target"
+      ],
+      "mitigations": [
+        "SYN cookies",
+        "Rate limiting",
+        "CDN/DDoS protection",
+        "ISP-level filtering"
+      ],
+      "defense_commands": [
+        "netstat -n | awk '/SYN_RECV/ {print $5}' | cut -d: -f1 | sort | uniq -c | sort -n",
+        "iptables -A INPUT -p tcp --syn -m limit --limit 1/s -j ACCEPT"
+      ]
+    },
+    "Reconnaissance": {
+      "description": "Information-gathering phase: scanning, enumeration, and fingerprinting of targets before attack.",
+      "indicators": [
+        "Port scan patterns",
+        "Multiple probes from same IP",
+        "DNS enumeration bursts"
+      ],
+      "commands": [
+        "nmap -sV -p- <target>",
+        "nmap -O <target>",
+        "aws s3 ls",
+        "aws s3api get-bucket-acl --bucket <name>"
+      ],
+      "mitigations": [
+        "IDS/IPS with scan detection",
+        "Honeypots",
+        "Rate-limiting probes",
+        "Firewall logging"
+      ],
+      "defense_commands": [
+        "nmap -sn 192.168.1.0/24",
+        "tcpdump -i eth0 'tcp[tcpflags] & (tcp-syn) != 0'",
+        "aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=ListBuckets"
+      ]
+    },
+    "Analysis": {
+      "description": "Traffic analysis and protocol inspection attacks — often MITM or passive interception.",
+      "indicators": [
+        "ARP spoofing",
+        "Unusual ICMP traffic",
+        "Protocol anomalies"
+      ],
+      "commands": [
+        "tcpdump -i eth0 -w capture.pcap",
+        "arpspoof -i eth0 -t <victim> <gateway>"
+      ],
+      "mitigations": [
+        "Encrypted communications (TLS)",
+        "Static ARP entries",
+        "Network segmentation"
+      ],
+      "defense_commands": [
+        "arp -n",
+        "arping -I eth0 <gateway>",
+        "openssl s_client -connect <host>:443"
+      ]
+    },
+    "Backdoor": {
+      "description": "Persistent unauthorized access mechanism installed post-exploitation to maintain foothold.",
+      "indicators": [
+        "Unusual outbound connections",
+        "New cron jobs or services",
+        "Modified system binaries"
+      ],
+      "commands": [
+        "netcat -lvp 4444",
+        "meterpreter > run persistence"
+      ],
+      "mitigations": [
+        "File integrity monitoring",
+        "Endpoint detection",
+        "Network egress filtering"
+      ],
+      "defense_commands": [
+        "find / -mtime -1 -type f 2>/dev/null",
+        "netstat -tulpn | grep LISTEN",
+        "crontab -l && ls /etc/cron*"
+      ]
+    },
+    "Shellcode": {
+      "description": "Machine-code payloads injected into vulnerable processes to execute arbitrary commands.",
+      "indicators": [
+        "NOP sled patterns in traffic",
+        "Unusual memory addresses in payloads",
+        "Buffer overflow patterns"
+      ],
+      "commands": [
+        "msfvenom -p linux/x86/shell_reverse_tcp LHOST=<ip> LPORT=4444 -f elf"
+      ],
+      "mitigations": [
+        "ASLR/DEP/NX bit enabled",
+        "Stack canaries",
+        "Seccomp filters"
+      ],
+      "defense_commands": [
+        "cat /proc/sys/kernel/randomize_va_space",
+        "checksec --file=./binary",
+        "sysctl kernel.exec-shield"
+      ]
+    },
+    "Worms": {
+      "description": "Self-propagating malware that spreads across networks by exploiting vulnerabilities autonomously.",
+      "indicators": [
+        "Network broadcast storms",
+        "High outbound connection rate",
+        "Unexpected port 445/139 activity"
+      ],
+      "commands": [
+        "nmap -p 445 192.168.1.0/24 --open"
+      ],
+      "mitigations": [
+        "Network segmentation",
+        "Patch SMB vulnerabilities",
+        "Host-based firewalls"
+      ],
+      "defense_commands": [
+        "iptables -A INPUT -p tcp --dport 445 -j DROP",
+        "smb client list",
+        "netstat -an | grep 445"
+      ]
+    }
+  },
+  "protocol_distribution": {
+    "tcp": 123041,
+    "udp": 92701,
+    "unas": 15599,
+    "arp": 3846,
+    "ospf": 3271,
+    "sctp": 1474,
+    "any": 396,
+    "gre": 313,
+    "rsvp": 264,
+    "ipv6": 262
+  },
+  "feature_importance": {
+    "dur": {
+      "Backdoor": 1.19,
+      "Analysis": 0.4,
+      "Fuzzers": 1.63,
+      "Shellcode": -0.64,
+      "Reconnaissance": -0.01,
+      "Exploits": 1.09,
+      "DoS": 1.41,
+      "Worms": 0.31,
+      "Generic": -0.94
+    },
+    "sbytes": {
+      "Backdoor": -0.63,
+      "Analysis": -0.79,
+      "Fuzzers": 0.65,
+      "Shellcode": -0.87,
+      "Reconnaissance": -0.82,
+      "Exploits": 6.25,
+      "DoS": 3.49,
+      "Worms": -0.45,
+      "Generic": -0.89
+    },
+    "dbytes": {
+      "Backdoor": -0.99,
+      "Analysis": -0.99,
+      "Fuzzers": -0.98,
+      "Shellcode": -0.99,
+      "Reconnaissance": -0.93,
+      "Exploits": -0.32,
+      "DoS": -0.17,
+      "Worms": 1.94,
+      "Generic": -0.95
+    },
+    "rate": {
+      "Backdoor": 6.62,
+      "Analysis": 6.55,
+      "Fuzzers": 2.43,
+      "Shellcode": 4.06,
+      "Reconnaissance": 4.09,
+      "Exploits": 2.47,
+      "DoS": 6.46,
+      "Worms": 0.07,
+      "Generic": 9.71
+    },
+    "spkts": {
+      "Backdoor": -0.75,
+      "Analysis": -0.81,
+      "Fuzzers": -0.5,
+      "Shellcode": -0.78,
+      "Reconnaissance": -0.74,
+      "Exploits": 0.23,
+      "DoS": -0.13,
+      "Worms": -0.34,
+      "Generic": -0.91
+    },
+    "dpkts": {
+      "Backdoor": -0.96,
+      "Analysis": -0.94,
+      "Fuzzers": -0.82,
+      "Shellcode": -0.9,
+      "Reconnaissance": -0.85,
+      "Exploits": -0.29,
+      "DoS": -0.36,
+      "Worms": 0.91,
+      "Generic": -0.96
+    },
+    "sloss": {
+      "Backdoor": -0.93,
+      "Analysis": -0.9,
+      "Fuzzers": -0.18,
+      "Shellcode": -0.79,
+      "Reconnaissance": -0.79,
+      "Exploits": 1.71,
+      "DoS": 0.65,
+      "Worms": -0.57,
+      "Generic": -0.97
+    },
+    "dloss": {
+      "Backdoor": -0.97,
+      "Analysis": -0.96,
+      "Fuzzers": -0.91,
+      "Shellcode": -0.96,
+      "Reconnaissance": -0.91,
+      "Exploits": -0.29,
+      "DoS": -0.3,
+      "Worms": 1.42,
+      "Generic": -0.96
+    },
+    "sjit": {
+      "Backdoor": -0.86,
+      "Analysis": 0.76,
+      "Fuzzers": 2.33,
+      "Shellcode": -0.64,
+      "Reconnaissance": -0.46,
+      "Exploits": -0.44,
+      "DoS": -0.85,
+      "Worms": -0.35,
+      "Generic": -0.98
+    },
+    "djit": {
+      "Backdoor": -0.95,
+      "Analysis": -0.54,
+      "Fuzzers": 0.01,
+      "Shellcode": -0.89,
+      "Reconnaissance": -0.87,
+      "Exploits": 0.21,
+      "DoS": -0.86,
+      "Worms": -0.53,
+      "Generic": -0.96
+    },
+    "sload": {
+      "Backdoor": 3.04,
+      "Analysis": 2.95,
+      "Fuzzers": 3.29,
+      "Shellcode": 3.38,
+      "Reconnaissance": 1.37,
+      "Exploits": 1.05,
+      "DoS": 3.14,
+      "Worms": 1.44,
+      "Generic": 2.31
+    },
+    "dload": {
+      "Backdoor": -1.0,
+      "Analysis": -1.0,
+      "Fuzzers": -1.0,
+      "Shellcode": -1.0,
+      "Reconnaissance": -1.0,
+      "Exploits": -0.97,
+      "DoS": -0.99,
+      "Worms": -0.93,
+      "Generic": -1.0
+    }
+  },
+  "prompt_context": "=== CYBERSECURITY KNOWLEDGE BASE (from UNSW-NB15 Dataset) ===\nDataset: UNSW-NB15 Network Intrusion Detection Dataset | Records: 257,673\n\nATTACK CATEGORIES (real network traffic analysis):\n  • Normal: 93,000 samples (36.09%)\n  • Generic: 58,871 samples (22.85%)\n  • Exploits: 44,525 samples (17.28%)\n  • Fuzzers: 24,246 samples (9.41%)\n  • DoS: 16,353 samples (6.35%)\n  • Reconnaissance: 13,987 samples (5.43%)\n  • Analysis: 2,677 samples (1.04%)\n  • Backdoor: 2,329 samples (0.9%)\n  • Shellcode: 1,511 samples (0.59%)\n  • Worms: 174 samples (0.07%)\n\nATTACK DESCRIPTIONS, INDICATORS & COMMANDS:\n\n[GENERIC]\n  Description: Generic attack technique not fitting a specific category — often brute-force or protocol abuse.\n  Indicators: High packet rates, Unusual flag combinations, Repeated connection attempts\n  Attack commands: nmap -sS <target> | hydra -l admin -P passwords.txt <target>\n  Defense commands: iptables -A INPUT -m limit --limit 10/min -j ACCEPT | fail2ban-client status\n  Mitigations: Rate limiting, IP blocklisting, IDS rules for unusual flag patterns\n\n[EXPLOITS]\n  Description: Attacks exploiting known software vulnerabilities (CVEs) for remote code execution or privilege escalation.\n  Indicators: Unexpected payloads in traffic, Connections to unusual ports, Large spike in bytes sent to service\n  Attack commands: msfconsole | searchsploit <service>\n  Defense commands: dpkg -l | grep <package> | apt-get update && apt-get upgrade\n  Mitigations: Patch management, WAF deployment, Service version hardening\n\n[FUZZERS]\n  Description: Automated input fuzzing to discover vulnerabilities by sending malformed or random data.\n  Indicators: High volume of malformed requests, Elevated error rates, Connection resets\n  Attack commands: wfuzz -c -z file,wordlist.txt http://target/FUZZ | ffuf -w wordlist.txt -u http://target/FUZZ\n  Defense commands: grep '400\\|500' /var/log/apache2/access.log | wc -l | fail2ban-client status\n  Mitigations: Input validation, Web application firewall, Error handling hardening\n\n[DOS]\n  Description: Denial of Service attacks that overwhelm target resources to cause unavailability.\n  Indicators: Sudden traffic spike, High SYN packet rate, Server CPU at 100%, Connection timeouts\n  Attack commands: hping3 -S --flood -V -p 80 <target> | slowhttptest -c 500 -H -g -o test -i 10 -r 200 -t GET -u http://target\n  Defense commands: netstat -n | awk '/SYN_RECV/ {print $5}' | cut -d: -f1 | sort | uniq -c | sort -n | iptables -A INPUT -p tcp --syn -m limit --limit 1/s -j ACCEPT\n  Mitigations: SYN cookies, Rate limiting, CDN/DDoS protection, ISP-level filtering\n\n[RECONNAISSANCE]\n  Description: Information-gathering phase: scanning, enumeration, and fingerprinting of targets before attack.\n  Indicators: Port scan patterns, Multiple probes from same IP, DNS enumeration bursts\n  Attack commands: nmap -sV -p- <target> | nmap -O <target>\n  Defense commands: nmap -sn 192.168.1.0/24 | tcpdump -i eth0 'tcp[tcpflags] & (tcp-syn) != 0'\n  Mitigations: IDS/IPS with scan detection, Honeypots, Rate-limiting probes, Firewall logging\n\n[ANALYSIS]\n  Description: Traffic analysis and protocol inspection attacks — often MITM or passive interception.\n  Indicators: ARP spoofing, Unusual ICMP traffic, Protocol anomalies\n  Attack commands: tcpdump -i eth0 -w capture.pcap | arpspoof -i eth0 -t <victim> <gateway>\n  Defense commands: arp -n | arping -I eth0 <gateway>\n  Mitigations: Encrypted communications (TLS), Static ARP entries, Network segmentation\n\n[BACKDOOR]\n  Description: Persistent unauthorized access mechanism installed post-exploitation to maintain foothold.\n  Indicators: Unusual outbound connections, New cron jobs or services, Modified system binaries\n  Attack commands: netcat -lvp 4444 | meterpreter > run persistence\n  Defense commands: find / -mtime -1 -type f 2>/dev/null | netstat -tulpn | grep LISTEN\n  Mitigations: File integrity monitoring, Endpoint detection, Network egress filtering\n\n[SHELLCODE]\n  Description: Machine-code payloads injected into vulnerable processes to execute arbitrary commands.\n  Indicators: NOP sled patterns in traffic, Unusual memory addresses in payloads, Buffer overflow patterns\n  Attack commands: msfvenom -p linux/x86/shell_reverse_tcp LHOST=<ip> LPORT=4444 -f elf\n  Defense commands: cat /proc/sys/kernel/randomize_va_space | checksec --file=./binary\n  Mitigations: ASLR/DEP/NX bit enabled, Stack canaries, Seccomp filters\n\n[WORMS]\n  Description: Self-propagating malware that spreads across networks by exploiting vulnerabilities autonomously.\n  Indicators: Network broadcast storms, High outbound connection rate, Unexpected port 445/139 activity\n  Attack commands: nmap -p 445 192.168.1.0/24 --open\n  Defense commands: iptables -A INPUT -p tcp --dport 445 -j DROP | smb client list\n  Mitigations: Network segmentation, Patch SMB vulnerabilities, Host-based firewalls\n\n=== END KNOWLEDGE BASE ==="
+}

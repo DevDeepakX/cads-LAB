@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "open-lab-public",
+    "region": "us-east-1",
+    "owner": "lab-team",
+    "is_public": 1,
+    "policy": null,
+    "created_at": "2025-12-04T04:36:15.698804+00:00"
+  },
+  {
+    "id": 2,
+    "name": "lab-private",
+    "region": "us-west-2",
+    "owner": "lab-team",
+    "is_public": 0,
+    "policy": null,
+    "created_at": "2025-11-04T04:36:15.698850+00:00"
+  },
+  {
+    "id": 3,
+    "name": "permissive-policy",
+    "region": "eu-west-1",
+    "owner": "lab-team",
+    "is_public": 1,
+    "policy": "{\"Statement\": \"Allow *\"}",
+    "created_at": "2026-01-03T04:36:15.698860+00:00"
+  },
+  {
+    "id": 4,
+    "name": "backup-vault",
+    "region": "ap-southeast-1",
+    "owner": "backup-admin",
+    "is_public": 0,
+    "policy": null,
+    "created_at": "2025-08-06T04:36:15.698866+00:00"
+  },
+  {
+    "id": 5,
+    "name": "logs-bucket",
+    "region": "eu-central-1",
+    "owner": "monitoring",
+    "is_public": 0,
+    "policy": null,
+    "created_at": "2025-12-19T04:36:15.698871+00:00"
+  }
+]

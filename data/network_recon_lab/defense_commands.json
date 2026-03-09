@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "name": "Configure Firewall",
+    "pattern": "firewall-cmd --add-service=[service]",
+    "hint": "Add service to firewall whitelist",
+    "example": "firewall-cmd --add-service=http --permanent",
+    "level": "Beginner",
+    "category": "Prevention"
+  },
+  {
+    "id": 2,
+    "name": "Update Firewall Rules",
+    "pattern": "iptables -A INPUT -p tcp --dport 22 -j ACCEPT",
+    "hint": "Create firewall ACL",
+    "example": "iptables -A INPUT -p tcp -s 10.0.0.0/8 --dport 22 -j ACCEPT",
+    "level": "Intermediate",
+    "category": "Prevention"
+  },
+  {
+    "id": 3,
+    "name": "Enable IDS",
+    "pattern": "suricata/snort -c rules.yaml",
+    "hint": "Deploy intrusion detection",
+    "example": "suricata -c /etc/suricata/suricata.yaml -i eth0",
+    "level": "Intermediate",
+    "category": "Detection"
+  },
+  {
+    "id": 4,
+    "name": "Monitor Logs",
+    "pattern": "tail -f /var/log/syslog",
+    "hint": "Real-time log monitoring",
+    "example": "tail -f /var/log/auth.log | grep 'Failed'",
+    "level": "Beginner",
+    "category": "Detection"
+  },
+  {
+    "id": 5,
+    "name": "Network Segmentation",
+    "pattern": "vlan configuration",
+    "hint": "Implement network isolation",
+    "example": "create vlan 100 name admin-segment",
+    "level": "Intermediate",
+    "category": "Prevention"
+  },
+  {
+    "id": 6,
+    "name": "Disable Unnecessary Services",
+    "pattern": "systemctl disable [service]",
+    "hint": "Stop unused services",
+    "example": "systemctl disable telnet; systemctl disable ftp",
+    "level": "Beginner",
+    "category": "Hardening"
+  },
+  {
+    "id": 7,
+    "name": "Update Systems",
+    "pattern": "apt-get update && apt-get upgrade",
+    "hint": "Apply security patches",
+    "example": "apt-get update; apt-get upgrade -y",
+    "level": "Beginner",
+    "category": "Hardening"
+  },
+  {
+    "id": 8,
+    "name": "Change Default Credentials",
+    "pattern": "passwd [user]",
+    "hint": "Update default passwords",
+    "example": "echo 'user:newpass' | chpasswd",
+    "level": "Beginner",
+    "category": "Hardening"
+  },
+  {
+    "id": 9,
+    "name": "Enable Encryption",
+    "pattern": "openssl/ssh-keygen",
+    "hint": "Encrypt network traffic",
+    "example": "ssh-keygen -t rsa -b 4096",
+    "level": "Intermediate",
+    "category": "Protection"
+  },
+  {
+    "id": 10,
+    "name": "Setup VPN",
+    "pattern": "openvpn/wireguard config",
+    "hint": "Create secure tunnel",
+    "example": "openvpn --config server.conf",
+    "level": "Advanced",
+    "category": "Protection"
+  },
+  {
+    "id": 11,
+    "name": "SIEM Configuration",
+    "pattern": "splunk/elk setup",
+    "hint": "Centralized log management",
+    "example": "splunk add forward-server 192.168.1.10:9998",
+    "level": "Advanced",
+    "category": "Detection"
+  },
+  {
+    "id": 12,
+    "name": "Incident Response",
+    "pattern": "isolate_host [ip]",
+    "hint": "Quarantine compromised host",
+    "example": "iptables -A FORWARD -s 192.168.1.50 -j DROP",
+    "level": "Advanced",
+    "category": "Response"
+  }
+]

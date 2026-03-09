@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cheat Sheet</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <h2>Cheat Sheet — S3 Lab</h2>
+    <div class="row">
+      <div class="col card">
+        <h3>Attack Commands</h3>
+        <p class="log">aws s3 ls — list buckets</p>
+        <p class="log">aws s3 cp s3://monish-s3-lab/test.txt . — simulate download</p>
+        <p class="log">get-object s3://... — simulate GetObject</p>
+        <p class="log">exploit --read-object — simulate exploit</p>
+      </div>
+      <div class="col card">
+        <h3>Defense Commands</h3>
+        <p class="log">put-public-access-block — block public access (mitigation)</p>
+        <p class="log">aws s3api put-public-access-block --bucket monish-s3-lab ... — simulated full command</p>
+        <p class="log">check-policy monish-s3-lab — verify policy</p>
+      </div>
+    </div>
+    <a href="/lab/s3"><button>RETURN TO LAB</button></a>
+</div>
+</body>
+</html>

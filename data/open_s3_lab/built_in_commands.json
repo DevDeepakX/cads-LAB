@@ -1,0 +1,183 @@
+[
+  {
+    "name": "List buckets",
+    "pattern": "aws s3 ls",
+    "hint": "Discover available buckets to identify potential targets.",
+    "example": "aws s3 ls",
+    "level": "Beginner",
+    "category": "recon",
+    "mode": "attack"
+  },
+  {
+    "name": "Bucket policy scan",
+    "pattern": "aws s3api get-bucket-policy --bucket {bucket}",
+    "hint": "Inspect bucket policy for misconfigurations that allow unauthorized access.",
+    "example": "aws s3api get-bucket-policy --bucket open-lab-public",
+    "level": "Beginner",
+    "category": "scan",
+    "mode": "attack"
+  },
+  {
+    "name": "Download object",
+    "pattern": "aws s3 cp s3://{bucket}/{key} .",
+    "hint": "Attempt to download an object if it's publicly accessible.",
+    "example": "aws s3 cp s3://open-lab-public/reports/report_001.txt .",
+    "level": "Intermediate",
+    "category": "gain_access",
+    "mode": "attack"
+  },
+  {
+    "name": "Recursive list",
+    "pattern": "aws s3 ls s3://{bucket} --recursive",
+    "hint": "Enumerate all objects in the bucket to find sensitive files.",
+    "example": "aws s3 ls s3://open-lab-public --recursive",
+    "level": "Intermediate",
+    "category": "recon",
+    "mode": "attack"
+  },
+  {
+    "name": "Check object ACL",
+    "pattern": "aws s3api get-object-acl --bucket {bucket} --key {key}",
+    "hint": "Verify if the object ACL allows public read access.",
+    "example": "aws s3api get-object-acl --bucket open-lab-public --key reports/report_001.txt",
+    "level": "Beginner",
+    "category": "scan",
+    "mode": "attack"
+  },
+  {
+    "name": "Simulate HEAD request",
+    "pattern": "curl -I https://s3.amazonaws.com/{bucket}/{key}",
+    "hint": "Check if the object is accessible via HTTP without authentication.",
+    "example": "curl -I https://s3.amazonaws.com/open-lab-public/reports/report_001.txt",
+    "level": "Intermediate",
+    "category": "scan",
+    "mode": "attack"
+  },
+  {
+    "name": "Bucket versioning check",
+    "pattern": "aws s3api get-bucket-versioning --bucket {bucket}",
+    "hint": "See if versioning is enabled, which might expose old versions.",
+    "example": "aws s3api get-bucket-versioning --bucket open-lab-public",
+    "level": "Advanced",
+    "category": "scan",
+    "mode": "attack"
+  },
+  {
+    "name": "Public URL access",
+    "pattern": "curl https://s3.amazonaws.com/{bucket}/{key}",
+    "hint": "Directly access the object via its public URL if available.",
+    "example": "curl https://s3.amazonaws.com/open-lab-public/reports/report_001.txt",
+    "level": "Intermediate",
+    "category": "gain_access",
+    "mode": "attack"
+  },
+  {
+    "name": "Bucket tags inspection",
+    "pattern": "aws s3api get-bucket-tagging --bucket {bucket}",
+    "hint": "Check bucket tags for metadata that might reveal sensitive info.",
+    "example": "aws s3api get-bucket-tagging --bucket open-lab-public",
+    "level": "Advanced",
+    "category": "recon",
+    "mode": "attack"
+  },
+  {
+    "name": "Object metadata",
+    "pattern": "aws s3api head-object --bucket {bucket} --key {key}",
+    "hint": "Retrieve object metadata without downloading the full content.",
+    "example": "aws s3api head-object --bucket open-lab-public --key reports/report_001.txt",
+    "level": "Intermediate",
+    "category": "scan",
+    "mode": "attack"
+  },
+  {
+    "name": "Block public access",
+    "pattern": "aws s3api put-public-access-block --bucket {bucket} --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+    "hint": "Prevent new public ACLs and block public policies to secure the bucket.",
+    "example": "aws s3api put-public-access-block --bucket open-lab-public --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true",
+    "level": "Beginner",
+    "category": "mitigation",
+    "mode": "defense"
+  },
+  {
+    "name": "Revoke public ACL",
+    "pattern": "aws s3api put-object-acl --bucket {bucket} --key {key} --acl private",
+    "hint": "Change the object's ACL to private to stop unauthorized access.",
+    "example": "aws s3api put-object-acl --bucket open-lab-public --key reports/report_001.txt --acl private",
+    "level": "Intermediate",
+    "category": "remediation",
+    "mode": "defense"
+  },
+  {
+    "name": "Enable bucket logging",
+    "pattern": "aws s3api put-bucket-logging --bucket {bucket} --bucket-logging-status LoggingEnabled={TargetBucket=target-bucket,TargetPrefix=logs/}",
+    "hint": "Enable access logging to monitor and detect suspicious activities.",
+    "example": "aws s3api put-bucket-logging --bucket open-lab-public --bucket-logging-status LoggingEnabled={TargetBucket=target-bucket,TargetPrefix=logs/}",
+    "level": "Beginner",
+    "category": "monitoring",
+    "mode": "defense"
+  },
+  {
+    "name": "Set bucket policy",
+    "pattern": "aws s3api put-bucket-policy --bucket {bucket} --policy '{\"Version\":\"2012-10-17\",\"Statement\":[]}'",
+    "hint": "Apply a restrictive bucket policy to deny unauthorized access.",
+    "example": "aws s3api put-bucket-policy --bucket open-lab-public --policy '{\"Version\":\"2012-10-17\",\"Statement\":[]}'",
+    "level": "Intermediate",
+    "category": "remediation",
+    "mode": "defense"
+  },
+  {
+    "name": "Delete public objects",
+    "pattern": "aws s3 rm s3://{bucket}/{key}",
+    "hint": "Remove publicly accessible objects to prevent data exposure.",
+    "example": "aws s3 rm s3://open-lab-public/reports/report_001.txt",
+    "level": "Advanced",
+    "category": "remediation",
+    "mode": "defense"
+  },
+  {
+    "name": "Enable MFA delete",
+    "pattern": "aws s3api put-bucket-versioning --bucket {bucket} --versioning-configuration Status=Enabled,MFADelete=Enabled",
+    "hint": "Require MFA for delete operations to prevent accidental or malicious deletions.",
+    "example": "aws s3api put-bucket-versioning --bucket open-lab-public --versioning-configuration Status=Enabled,MFADelete=Enabled",
+    "level": "Advanced",
+    "category": "mitigation",
+    "mode": "defense"
+  },
+  {
+    "name": "Monitor access logs",
+    "pattern": "aws s3 ls s3://{log-bucket}/logs/ --recursive",
+    "hint": "Review access logs to identify patterns of unauthorized access.",
+    "example": "aws s3 ls s3://target-bucket/logs/ --recursive",
+    "level": "Intermediate",
+    "category": "monitoring",
+    "mode": "defense"
+  },
+  {
+    "name": "Rotate credentials",
+    "pattern": "aws iam create-access-key --user-name {user}",
+    "hint": "Generate new access keys and revoke old ones to mitigate leaked credentials.",
+    "example": "aws iam create-access-key --user-name lab-user",
+    "level": "Advanced",
+    "category": "remediation",
+    "mode": "defense"
+  },
+  {
+    "name": "Set up alerts",
+    "pattern": "aws cloudwatch put-metric-alarm --alarm-name S3Access --alarm-description 'Alert on high S3 access' --metric-name NumberOfObjects --namespace AWS/S3 --statistic Sum --period 300 --threshold 100 --comparison-operator GreaterThanThreshold",
+    "hint": "Create CloudWatch alarms to notify on unusual S3 activity.",
+    "example": "aws cloudwatch put-metric-alarm --alarm-name S3Access --alarm-description 'Alert on high S3 access' --metric-name NumberOfObjects --namespace AWS/S3 --statistic Sum --period 300 --threshold 100 --comparison-operator GreaterThanThreshold",
+    "level": "Advanced",
+    "category": "monitoring",
+    "mode": "defense"
+  },
+  {
+    "name": "Encrypt objects",
+    "pattern": "aws s3 cp s3://{bucket}/{key} s3://{bucket}/{key} --sse AES256",
+    "hint": "Apply server-side encryption to protect data at rest.",
+    "example": "aws s3 cp s3://open-lab-public/reports/report_001.txt s3://open-lab-public/reports/report_001.txt --sse AES256",
+    "level": "Intermediate",
+    "category": "remediation",
+    "mode": "defense"
+  }
+]</content>
+<parameter name="filePath">D:/Desktop/CADS/C_A_D_S/data/open_s3_lab/built_in_commands.json

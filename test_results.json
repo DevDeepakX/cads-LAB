@@ -1,0 +1,695 @@
+{
+  "passed": 54,
+  "failed": 4,
+  "total": 58,
+  "pass_rate": 93.10344827586206,
+  "results": [
+    {
+      "cmd": "aws s3 ls",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "List S3 buckets"
+    },
+    {
+      "cmd": "aws s3 ls s3://open-lab-public --recursive",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "List bucket contents recursively"
+    },
+    {
+      "cmd": "aws s3 ls s3://bucket",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "List specific bucket"
+    },
+    {
+      "cmd": "enumerate",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Enumerate resources"
+    },
+    {
+      "cmd": "nmap -sV 192.168.1.0/24",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Network scan with service detection"
+    },
+    {
+      "cmd": "nmap -A target.com",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Aggressive nmap scan"
+    },
+    {
+      "cmd": "whois example.com",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "WHOIS lookup"
+    },
+    {
+      "cmd": "dig example.com",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "DNS lookup"
+    },
+    {
+      "cmd": "traceroute example.com",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Traceroute to host"
+    },
+    {
+      "cmd": "find / -type f -name '*.config'",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Find configuration files"
+    },
+    {
+      "cmd": "grep -r 'password' /var/",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Search for sensitive patterns"
+    },
+    {
+      "cmd": "locate sensitive_file",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Locate files by name"
+    },
+    {
+      "cmd": "ls -la",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "List directory contents"
+    },
+    {
+      "cmd": "pwd",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "Print working directory"
+    },
+    {
+      "cmd": "whoami",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "Show current user"
+    },
+    {
+      "cmd": "aws s3 cp s3://bucket/file ./file",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Download single file from S3"
+    },
+    {
+      "cmd": "aws s3 cp s3://bucket/sensitive.txt ./",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Copy sensitive data"
+    },
+    {
+      "cmd": "aws s3 sync s3://bucket ./download_data",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Bulk download from S3"
+    },
+    {
+      "cmd": "aws s3 sync s3://backup-vault /tmp",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Sync entire backup bucket"
+    },
+    {
+      "cmd": "get-object --bucket mybucket --key mykey",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Get object from S3"
+    },
+    {
+      "cmd": "getobject bucket/key",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Alternative get-object syntax"
+    },
+    {
+      "cmd": "exploit",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Execute exploit"
+    },
+    {
+      "cmd": "upload malware.exe s3://bucket/",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Upload malicious file"
+    },
+    {
+      "cmd": "access admin panel",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Gain unauthorized access"
+    },
+    {
+      "cmd": "download sensitive_data.zip",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Download sensitive data"
+    },
+    {
+      "cmd": "retrieve credentials",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Retrieve credentials"
+    },
+    {
+      "cmd": "exfiltrate database",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Exfiltrate data"
+    },
+    {
+      "cmd": "put-public-access-block --bucket mybucket",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "ATTACK",
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Block public access"
+    },
+    {
+      "cmd": "aws s3api put-public-access-block --bucket secure-bucket",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "ATTACK",
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "AWS API public access block"
+    },
+    {
+      "cmd": "block-public",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Block public access (short form)"
+    },
+    {
+      "cmd": "put-bucket-policy --bucket secure --policy policy.json",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Set bucket policy"
+    },
+    {
+      "cmd": "revoke admin --from user",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Revoke permissions"
+    },
+    {
+      "cmd": "fix security",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Fix security issues"
+    },
+    {
+      "cmd": "remediate",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Apply remediation"
+    },
+    {
+      "cmd": "disable public-access",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "ATTACK",
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Disable public access"
+    },
+    {
+      "cmd": "deny GetObject",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "ATTACK",
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Deny object access"
+    },
+    {
+      "cmd": "restrict *",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Restrict all access"
+    },
+    {
+      "cmd": "encrypt --algorithm AES256",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Enable encryption"
+    },
+    {
+      "cmd": "enable logging",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Enable logging"
+    },
+    {
+      "cmd": "protect bucket",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Protect bucket"
+    },
+    {
+      "cmd": "ls",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "List files (no options)"
+    },
+    {
+      "cmd": "ls -la",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "List files (long format)"
+    },
+    {
+      "cmd": "ls -l",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "List files (long)"
+    },
+    {
+      "cmd": "ls -a",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "List all files"
+    },
+    {
+      "cmd": "pwd",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "Print working directory"
+    },
+    {
+      "cmd": "whoami",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "Show current user"
+    },
+    {
+      "cmd": "uname -a",
+      "state": "initialized",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "System information"
+    },
+    {
+      "cmd": "ifconfig",
+      "state": "recon",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "Show network configuration"
+    },
+    {
+      "cmd": "ip addr",
+      "state": "recon",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [],
+      "passed": false,
+      "description": "Show IP addresses"
+    },
+    {
+      "cmd": "ipconfig",
+      "state": "attack_started",
+      "expected": [
+        "BASIC"
+      ],
+      "matched": [
+        "BASIC"
+      ],
+      "passed": true,
+      "description": "Windows IP config"
+    },
+    {
+      "cmd": "invalid command",
+      "state": "initialized",
+      "expected": [],
+      "matched": [],
+      "passed": false,
+      "description": "Random invalid command"
+    },
+    {
+      "cmd": "xyz123",
+      "state": "recon",
+      "expected": [],
+      "matched": [],
+      "passed": false,
+      "description": "Gibberish input"
+    },
+    {
+      "cmd": "rm -rf /",
+      "state": "attack_started",
+      "expected": [],
+      "matched": [],
+      "passed": false,
+      "description": "Dangerous command not in patterns"
+    },
+    {
+      "cmd": "AWS S3 LS",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Uppercase command"
+    },
+    {
+      "cmd": "Aws S3 Ls",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Mixed case command"
+    },
+    {
+      "cmd": "aws s3 ls --profile default",
+      "state": "initialized",
+      "expected": [
+        "RECON"
+      ],
+      "matched": [
+        "RECON"
+      ],
+      "passed": true,
+      "description": "Command with options"
+    },
+    {
+      "cmd": "AWS S3 CP s3://bucket/file .",
+      "state": "recon",
+      "expected": [
+        "ATTACK"
+      ],
+      "matched": [
+        "ATTACK"
+      ],
+      "passed": true,
+      "description": "Uppercase attack command"
+    },
+    {
+      "cmd": "Put-Public-Access-Block",
+      "state": "attack_started",
+      "expected": [
+        "MITIGATION"
+      ],
+      "matched": [
+        "ATTACK",
+        "MITIGATION"
+      ],
+      "passed": true,
+      "description": "Uppercase mitigation"
+    }
+  ]
+}

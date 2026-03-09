@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ lab_title or 'Lab' }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container neon">
+    <header class="hero">
+      <h1>{{ lab_title or 'Lab: Open S3 Bucket' }}</h1>
+      <p class="tagline">{{ lab_desc or 'Explore misconfigurations in S3 buckets. Attack or defend against unauthorized access.' }}</p>
+    </header>
+    <section class="card">
+        <h3>Introduction</h3>
+        <p class="small">This lab teaches how to discover public S3 buckets, inspect objects, and apply mitigations such as blocking public access or fixing object ACLs. Use the controls below to open the terminal and choose a training mode (attack or defense).</p>
+    </section>
+
+    <div class="row">
+            <div class="col card">
+                <h3>Overview</h3>
+                <p class="prompt">scan_bucket --access public</p>
+                <p class="log warning">⚠ Bucket is PUBLIC</p>
+                <p class="log">Unauthorized access logged</p>
+                <a href="/terminal"><button>Open Terminal</button></a>
+            </div>
+
+            <div class="col card">
+                <h3>Choose Mode</h3>
+                <div class="controls">
+                    <a href="/lab/{{ lab_id }}/select_mode"><button class="mode-attack">Attack Mode — You Attack</button></a>
+                    <a href="/lab/{{ lab_id }}/select_mode"><button class="mode-defend">Defense Mode — You Defend</button></a>
+                </div>
+                <p class="muted">Choose a training mode. The system will simulate an AI opponent.</p>
+                <a href="/logs"><button>View Logs</button></a>
+            </div>
+        </div>
+        <div style="margin-top:12px">
+            <a href="/cheatsheet"><button>CHEAT SHEET</button></a>
+        </div>
+
+</body>
+</html>
