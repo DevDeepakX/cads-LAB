@@ -3,93 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CADS — {{ lab_title }} Start</title>
+    <title>CADS — {{ lab.title }} Mode</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
-        .mode-header { text-align: center; margin-bottom: 60px; }
-        .mode-header h1 { font-size: 52px; }
+        .mode-header { text-align: left; margin-bottom: 40px; }
+        .mode-header h1 { font-size: 48px; margin-bottom: 12px; }
+        .mode-header p { font-size: 20px; color: var(--dim); }
 
         .mode-selection-container {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1000px; margin: 0 auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 0 auto;
         }
-        @media (max-width: 850px) { .mode-selection-container { grid-template-columns: 1fr; } }
 
         .mode-choice {
-            padding: 48px 32px; border-radius: 24px;
+            padding: 40px 32px; border-radius: 20px;
             text-align: center; border: 1px solid var(--border);
-            background: rgba(102,126,234,0.02); transition: all 0.3s;
+            background: rgba(102,126,234,0.03); transition: all 0.3s;
             display: flex; flex-direction: column; gap: 20px;
         }
-        .mode-choice:hover { transform: translateY(-10px); background: rgba(102,126,234,0.05); }
+        .mode-choice:hover { transform: translateY(-5px); background: rgba(102,126,234,0.06); }
 
-        .mode-choice.attack { border-color: rgba(248,113,113,0.3); }
-        .mode-choice.attack:hover { border-color: #f87171; box-shadow: 0 15px 40px rgba(248,113,113,0.08); }
-        .mode-choice.defense { border-color: rgba(52,211,153,0.3); }
-        .mode-choice.defense:hover { border-color: #34d399; box-shadow: 0 15px 40px rgba(52,211,153,0.08); }
-
-        .mode-icon { font-size: 64px; }
-        .mode-choice h3 { font-size: 28px; margin: 0; }
-        .mode-choice p { font-size: 15px; color: var(--dim); min-height: 80px; }
-
-        .level-select {
-            width: 100%; padding: 14px; margin-bottom: 10px;
-            background: var(--bg); border: 1px solid var(--border);
-            color: var(--text); border-radius: 12px; font-weight: 500;
-        }
+        .mode-icon { font-size: 48px; }
+        .mode-choice h3 { font-size: 24px; margin: 0; color: var(--text); }
+        .mode-choice p { font-size: 16px; color: var(--dim); min-height: 60px; }
 
         .btn-start {
             width: 100%; padding: 16px; border-radius: 12px;
-            font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+            font-weight: 700; font-size: 16px; cursor: pointer;
+            border: 1px solid var(--border); background: transparent; color: var(--text);
+            transition: all 0.2s;
         }
-        .btn-attack { background: linear-gradient(90deg, #f87171, #ef4444); color: white; }
-        .btn-defense { background: linear-gradient(90deg, #34d399, #10b981); color: white; }
+        .btn-start:hover { background: var(--cyan); color: #000; border-color: var(--cyan); }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" style="max-width: 900px; padding-top: 10vh;">
     <header class="mode-header">
-        <h1 class="gradient-text">{{ lab_title }}</h1>
-        <p>Strategic Mode Selection</p>
+        <h1 class="gradient-text">{{ lab.title }}</h1>
+        <p>Step 2: Select Mode</p>
     </header>
 
     <div class="mode-selection-container">
-        <!-- Attack -->
-        <article class="mode-choice attack">
-            <div class="mode-icon">⚔️</div>
-            <h3 style="color: #f87171;">RED TEAM</h3>
-            <p>You are the adversary. Your objective is to discover cloud misconfigurations, exfiltrate data, and bypass security controls without being detected.</p>
-            <form action="/lab/{{ lab_id }}/start" method="post" style="display: flex; flex-direction: column; gap: 15px;">
-                <input type="hidden" name="mode" value="attack">
-                <select name="level" class="level-select" required>
-                    <option value="">Difficulty Level</option>
-                    <option value="Beginner">Level 1: Novice (No Detection)</option>
-                    <option value="Intermediate">Level 2: Standard (AI Active)</option>
-                    <option value="Advanced">Level 3: Elite (Hardened Targets)</option>
-                </select>
-                <button type="submit" class="btn btn-start btn-attack">Initialize Attack →</button>
+        {% for mode_name in lab.modes %}
+        <article class="mode-choice">
+            <h3>{{ mode_name }}</h3>
+            <p>Play the lab scenario from the {% if 'Attack' in mode_name %}offensive{% else %}defensive{% endif %} perspective.</p>
+            <form action="/lab/{{ lab_id }}/start" method="post" style="margin-top: auto;">
+                <input type="hidden" name="mode" value="{{ mode_name }}">
+                <button type="submit" class="btn-start">Select {{ mode_name }}</button>
             </form>
         </article>
-
-        <!-- Defense -->
-        <article class="mode-choice defense">
-            <div class="mode-icon">🛡️</div>
-            <h3 style="color: #34d399;">BLUE TEAM</h3>
-            <p>You are the defender. Monitor infrastructure logs, identify attack patterns using real datasets, and apply restrictive security policies to secure the cloud.</p>
-            <form action="/lab/{{ lab_id }}/start" method="post" style="display: flex; flex-direction: column; gap: 15px;">
-                <input type="hidden" name="mode" value="defense">
-                <select name="level" class="level-select" required>
-                    <option value="">Difficulty Level</option>
-                    <option value="Beginner">Level 1: Novice (Simple Attacks)</option>
-                    <option value="Intermediate">Level 2: Tactical (Mixed Scenarios)</option>
-                    <option value="Advanced">Level 3: Strategic (Persistent Threats)</option>
-                </select>
-                <button type="submit" class="btn btn-start btn-defense">Deploy Defense →</button>
-            </form>
-        </article>
+        {% endfor %}
     </div>
 
-    <div style="margin-top: 60px; text-align: center;">
-        <a href="/labs" class="btn btn-outline" style="font-size: 13px; opacity: 0.6;">← Change Lab</a>
+    <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+        <a href="/labs" class="btn btn-outline" style="padding: 16px 32px;">← Back</a>
     </div>
 </div>
 </body>

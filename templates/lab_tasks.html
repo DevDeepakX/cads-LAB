@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADS — {{ lab.title }} Tasks</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .tasks-header { margin-bottom: 40px; text-align: left; }
+        .tasks-header h1 { font-size: 48px; margin-bottom: 12px; }
+
+        .task-list { display: flex; flex-direction: column; gap: 20px; margin-bottom: 40px; }
+        .task-item {
+            background: rgba(10, 18, 36, 0.8);
+            border: 1px solid var(--border);
+            padding: 24px 32px; border-radius: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .task-info h3 { font-size: 20px; margin-bottom: 8px; color: var(--text); }
+        .task-tag { font-size: 14px; background: rgba(0,245,212,0.1); color: var(--green); padding: 4px 10px; border-radius: 6px; }
+        .task-number { font-size: 24px; font-weight: 800; color: rgba(0,180,255,0.3); }
+    </style>
+</head>
+<body>
+<div class="container" style="max-width: 800px; padding-top: 10vh;">
+    <header class="tasks-header">
+        <h1 class="gradient-text">Task List</h1>
+        <p style="color: var(--dim); font-size: 18px;">You must complete these tasks sequentially.</p>
+    </header>
+
+    <div class="task-list">
+        {% for task in lab.tasks %}
+            <div class="task-item">
+                <div class="task-info">
+                    <h3>{{ task.title }}</h3>
+                    <span class="task-tag">Concept: {{ task.concept }}</span>
+                </div>
+                <div class="task-number">Task {{ loop.index }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: center;">
+        <a href="/lab/{{ lab_id }}/intro" class="btn btn-outline" style="padding: 16px 32px;">← Back</a>
+        <form action="/lab/{{ lab_id }}/start" method="post">
+            <button type="submit" class="btn btn-primary" style="padding: 16px 48px; font-size: 18px; box-shadow: 0 0 20px rgba(0,245,212,0.4);">Launch Terminal View →</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

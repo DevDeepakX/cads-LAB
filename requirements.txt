@@ -15,6 +15,9 @@ python-dotenv==1.0.0
 pandas>=2.0.0
 pyarrow>=14.0.0
 
+# Background news scheduler uses only stdlib: threading, time (no pip install needed)
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Optional: For production deployment
 # gunicorn==21.2.0

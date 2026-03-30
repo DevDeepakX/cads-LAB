@@ -5,10 +5,12 @@ import os
 import re
 import secrets
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 from typing import Optional
 import requests
+import threading
+import time
 
 # Load environment variables from .env file
 try:
@@ -19,8 +21,8 @@ except ImportError:
     pass
 
 app = Flask(__name__)
-# Use a secure random secret key unless provided via env
-app.secret_key = os.environ.get("FLASK_SECRET_KEY") or secrets.token_urlsafe(32)
+# Use a static secret key to persist sessions across server restarts
+app.secret_key = os.environ.get("FLASK_SECRET_KEY") or "cads_super_secret_key_12345"
 
 # ── Groq API configuration ─────────────────────────────────────────────────
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
@@ -31,15 +33,138 @@ GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
 # ── Cyber knowledge base (built from UNSW-NB15 dataset) ─────────────────────
 _CYBER_KNOWLEDGE_PROMPT = ""
 _CYBER_KNOWLEDGE_PATH = os.path.join(os.path.dirname(__file__), "src", "cyber_knowledge.json")
-try:
-    with open(_CYBER_KNOWLEDGE_PATH, "r", encoding="utf-8") as _kf:
-        import json as _json
-        _kdata = _json.load(_kf)
-        _CYBER_KNOWLEDGE_PROMPT = _kdata.get("prompt_context", "")
-    print(f"[INFO] Cyber knowledge base loaded ({len(_CYBER_KNOWLEDGE_PROMPT)} chars)")
-except Exception as _ke:
-    print(f"[WARNING] Could not load cyber_knowledge.json: {_ke}")
-    print("[INFO] Run: python src/build_cyber_knowledge.py  to build the knowledge base.")
+
+# ── Live cyber news cache (auto-refreshed every 2-3 days) ────────────────────
+_LIVE_CYBER_NEWS = ""  # populated by background scheduler
+_LAST_NEWS_FETCH = None  # datetime of last successful fetch
+_NEWS_REFRESH_DAYS = 2   # refresh interval in days
+_NEWS_CACHE_PATH = os.path.join(os.path.dirname(__file__), "src", "live_cyber_news.json")
+
+def _load_knowledge_file():
+    global _CYBER_KNOWLEDGE_PROMPT
+    try:
+        with open(_CYBER_KNOWLEDGE_PATH, "r", encoding="utf-8") as _kf:
+            _kdata = json.load(_kf)
+            _CYBER_KNOWLEDGE_PROMPT = _kdata.get("prompt_context", "")
+        print(f"[INFO] Cyber knowledge base loaded ({len(_CYBER_KNOWLEDGE_PROMPT)} chars)")
+    except Exception as _ke:
+        print(f"[WARNING] Could not load cyber_knowledge.json: {_ke}")
+        print("[INFO] Run: python src/build_cyber_knowledge.py  to build the knowledge base.")
+
+_load_knowledge_file()
+
+def _load_news_cache():
+    """Load cached news from disk on startup."""
+    global _LIVE_CYBER_NEWS, _LAST_NEWS_FETCH
+    try:
+        if os.path.exists(_NEWS_CACHE_PATH):
+            with open(_NEWS_CACHE_PATH, "r", encoding="utf-8") as f:
+                cache = json.load(f)
+            _LIVE_CYBER_NEWS = cache.get("news_text", "")
+            fetched_str = cache.get("fetched_at")
+            if fetched_str:
+                _LAST_NEWS_FETCH = datetime.fromisoformat(fetched_str)
+            print(f"[INFO] Live cyber news cache loaded (fetched: {_LAST_NEWS_FETCH})")
+    except Exception as e:
+        print(f"[WARNING] Could not load news cache: {e}")
+
+def _fetch_live_cyber_news():
+    """Fetch latest cybersecurity headlines from public RSS/JSON feeds.
+    
+    Uses free, no-auth-required news APIs to get real threat intelligence.
+    Runs on a background thread every _NEWS_REFRESH_DAYS days.
+    """
+    global _LIVE_CYBER_NEWS, _LAST_NEWS_FETCH
+    try:
+        now = datetime.utcnow()
+        if (_LAST_NEWS_FETCH is not None and
+                (now - _LAST_NEWS_FETCH).days < _NEWS_REFRESH_DAYS):
+            return  # not time yet
+
+        print("[INFO] Fetching live cybersecurity news...")
+        news_items = []
+
+        # Source 1: CVE RSS (NVD)
+        try:
+            rss = requests.get(
+                "https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-recent.json.gz",
+                timeout=10,
+                headers={"User-Agent": "CADS-Lab/1.0"}
+            )
+            # Use the NVD API instead (simpler)
+            nvd_resp = requests.get(
+                "https://services.nvd.nist.gov/rest/json/cves/2.0?resultsPerPage=5&startIndex=0",
+                timeout=10,
+                headers={"User-Agent": "CADS-Lab/1.0"}
+            )
+            if nvd_resp.status_code == 200:
+                nvd_data = nvd_resp.json()
+                for item in nvd_data.get("vulnerabilities", [])[:5]:
+                    cve = item.get("cve", {})
+                    cve_id = cve.get("id", "")
+                    descs = cve.get("descriptions", [])
+                    desc = next((d["value"] for d in descs if d.get("lang") == "en"), "")
+                    if cve_id and desc:
+                        news_items.append(f"[CVE] {cve_id}: {desc[:200]}")
+        except Exception as e:
+            print(f"[WARNING] NVD fetch error: {e}")
+
+        # Source 2: CISA Known Exploited Vulnerabilities
+        try:
+            cisa_resp = requests.get(
+                "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+                timeout=10,
+                headers={"User-Agent": "CADS-Lab/1.0"}
+            )
+            if cisa_resp.status_code == 200:
+                cisa_data = cisa_resp.json()
+                vulns = cisa_data.get("vulnerabilities", [])
+                # Most recent 5
+                recent = sorted(vulns, key=lambda x: x.get("dateAdded", ""), reverse=True)[:5]
+                for v in recent:
+                    name = v.get("vulnerabilityName", "")
+                    notes = v.get("shortDescription", "")
+                    date = v.get("dateAdded", "")
+                    news_items.append(f"[CISA KEV] {date} — {name}: {notes[:180]}")
+        except Exception as e:
+            print(f"[WARNING] CISA fetch error: {e}")
+
+        if not news_items:
+            print("[WARNING] No news fetched, keeping cached data.")
+            return
+
+        news_text = "\n".join(news_items)
+        _LIVE_CYBER_NEWS = news_text
+        _LAST_NEWS_FETCH = now
+
+        # Persist to disk
+        try:
+            os.makedirs(os.path.dirname(_NEWS_CACHE_PATH), exist_ok=True)
+            with open(_NEWS_CACHE_PATH, "w", encoding="utf-8") as f:
+                json.dump({"fetched_at": now.isoformat(), "news_text": news_text}, f, indent=2)
+            print(f"[INFO] Live cyber news updated — {len(news_items)} items saved.")
+        except Exception as e:
+            print(f"[WARNING] Could not save news cache: {e}")
+
+    except Exception as e:
+        print(f"[WARNING] _fetch_live_cyber_news error: {e}")
+
+def _news_scheduler_loop():
+    """Background thread: checks and refreshes news every 6 hours."""
+    while True:
+        try:
+            _fetch_live_cyber_news()
+        except Exception:
+            pass
+        time.sleep(6 * 3600)  # check every 6 hours
+
+# Load existing news from disk cache on startup
+_load_news_cache()
+
+# Start the background news refresh thread
+_news_thread = threading.Thread(target=_news_scheduler_loop, daemon=True)
+_news_thread.start()
+print("[INFO] Background cyber news refresh scheduler started.")
 
 # Ensure logs dir and database exist
 LOGS_DIR = os.path.join(os.path.dirname(__file__), "logs")
@@ -81,6 +206,23 @@ def init_db():
             mitigation_success INTEGER,
             status TEXT,
             created_at TEXT
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS tasks (
+            id TEXT PRIMARY KEY,
+            lab TEXT,
+            task TEXT,
+            answer TEXT,
+            hint TEXT
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS progress (
+            user_id TEXT,
+            task_id TEXT,
+            status TEXT,
+            PRIMARY KEY(user_id, task_id)
         )
     """)
     conn.commit()
@@ -391,65 +533,56 @@ def labs():
     return render_template("labs.html")
 
 
-# ---------------- START LAB ----------------
-@app.route("/lab/pwndora")
-def pwndora_lab():
-    # Show introduction page for PwnDora Challenge lab
-    lab_what = (
-        "The PwnDora Challenge is a web application security lab named after the famous Pandora's Box. "
-        "It simulates a vulnerable web application with multiple security flaws including injection vulnerabilities, "
-        "broken authentication, cross-site scripting (XSS), insecure deserialization, and more OWASP Top 10 vulnerabilities. "
-        "Your mission is to identify these weaknesses and either exploit them or defend against them."
-    )
-    lab_why = (
-        "Web application vulnerabilities remain one of the most common attack vectors. "
-        "The OWASP Top 10 represents the most critical security risks to web applications, affecting millions of sites worldwide. "
-        "By mastering these vulnerabilities in a safe sandbox, you'll be able to build secure applications and protect against real-world threats."
-    )
-    lab_learn = (
-        "• Identification and exploitation of SQL injection, XSS, and CSRF vulnerabilities\n"
-        "• Bypassing authentication and session management controls\n"
-        "• Discovering and exploiting information disclosure issues\n"
-        "• Testing and fixing broken access controls\n"
-        "• Implementing input validation and output encoding\n"
-        "• Securing web applications against common attack patterns"
-    )
-    lab_platform_value = (
-        "PwnDora offers a realistic web application environment where you can practice ethical hacking and defensive techniques. "
-        "All data is synthetic and poses no risk. Learn through hands-on exploitation, understand how defenses work, and develop "
-        "the skills to secure modern web applications against evolving threats."
-    )
-    
-    return render_template(
-        "lab_intro.html",
-        lab_title="PwnDora Challenge",
-        lab_id="pwndora",
-        lab_what=lab_what,
-        lab_why=lab_why,
-        lab_learn=lab_learn,
-        lab_platform_value=lab_platform_value
-    )
+# ---------------- DYNAMIC LAB ROUTES ----------------
+def load_labs():
+    import json
+    path = os.path.join(os.path.dirname(__file__), "data", "labs.json")
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
+@app.route("/lab/<lab_id>")
+def lab_select_mode(lab_id):
+    labs = load_labs()
+    lab = labs.get(lab_id)
+    if not lab:
+        return "Lab not found", 404
+    return render_template("lab_mode_select.html", lab_id=lab_id, lab=lab)
 
-@app.route("/lab/pwndora/select_mode")
-def pwndora_select_mode():
-    # Show mode selection page for PwnDora lab
-    return render_template("lab_mode_select.html", lab_title="PwnDora Challenge", lab_id="pwndora")
+@app.route("/lab/<lab_id>/intro", methods=["GET", "POST"])
+def lab_intro(lab_id):
+    if request.method == "POST":
+        mode = request.form.get("mode")
+        if mode:
+            session["mode"] = mode
+            
+    labs = load_labs()
+    lab = labs.get(lab_id)
+    if not lab:
+        return "Lab not found", 404
+    return render_template("lab_intro.html", lab_id=lab_id, lab=lab)
 
+@app.route("/lab/<lab_id>/tasks")
+def lab_tasks(lab_id):
+    labs = load_labs()
+    lab = labs.get(lab_id)
+    if not lab:
+        return "Lab not found", 404
+    return render_template("lab_tasks.html", lab_id=lab_id, lab=lab)
 
-@app.route("/lab/pwndora/start", methods=["POST"])
-def pwndora_start():
-    # Initialize lab session with selected mode and level
-    mode = request.form.get("mode")
-    level = request.form.get("level")
-    
-    if mode not in ("attack", "defense") or level not in ("Beginner", "Intermediate", "Advanced"):
-        return "Invalid mode or level", 400
-    
-    # Initialize a new lab session for PwnDora
+@app.route("/lab/<lab_id>/start", methods=["GET", "POST"])
+def lab_start(lab_id):
+    labs = load_labs()
+    lab = labs.get(lab_id)
+    if not lab:
+        return "Lab not found", 404
+
     session.clear()
     session["lab_id"] = uuid.uuid4().hex
-    session["lab_name"] = "PwnDora Challenge"
+    session["lab_name"] = lab.get("title")
+    session["lab_key"] = lab_id
     session["lab_state"] = "initialized"
     session["terminal_output"] = []
     session["score"] = 0
@@ -458,193 +591,24 @@ def pwndora_start():
     session["mitigation_success"] = 0
     session["attack_started_at"] = None
     session["attack_detected_at"] = None
-    session["mode"] = mode
-    session["level"] = level
-    session["cheatsheet_views_pwndora"] = 0
-    session["cheatsheet_last_access_pwndora"] = None
+    session["solved_tasks"] = []
+    
+    # Optional from description page
+    session["mode"] = request.form.get("mode") or session.get("mode", "Attack mode")
 
-    # create fresh per-session log file
     _ensure_session_log()
-
     return redirect(url_for("terminal"))
-
-
-@app.route("/lab/s3")
-def s3_lab():
-    # Show introduction page for Open S3 Bucket lab
-    lab_what = (
-        "The Open S3 Bucket lab simulates a real-world cloud misconfiguration scenario. "
-        "You will work with Amazon S3 buckets that have been incorrectly configured with public access permissions. "
-        "Your task is to discover these misconfigurations, understand the security implications, and apply the correct remediation steps."
-    )
-    lab_why = (
-        "S3 bucket misconfigurations are one of the leading causes of data breaches in cloud environments. "
-        "Organizations worldwide have exposed sensitive data, credentials, and intellectual property through publicly accessible S3 buckets. "
-        "Understanding how these vulnerabilities occur and how to prevent them is critical for any cloud security professional."
-    )
-    lab_learn = (
-        "• How to enumerate and discover S3 buckets\n"
-        "• How to identify public access configurations\n"
-        "• How to exfiltrate data from misconfigured buckets\n"
-        "• How to apply security controls (public access blocks, ACLs, bucket policies)\n"
-        "• How to detect and respond to S3-based attacks"
-    )
-    lab_platform_value = (
-        "This platform provides a safe, sandbox environment where you can practice real cloud attack and defense techniques "
-        "without any risk to actual data or infrastructure. All datasets are completely fictional and dummy data. "
-        "Learn hands-on skills through realistic scenarios, receive immediate feedback, and progressively master cloud security."
-    )
-    
-    return render_template(
-        "lab_intro.html",
-        lab_title="Open S3 Bucket Lab",
-        lab_id="s3",
-        lab_what=lab_what,
-        lab_why=lab_why,
-        lab_learn=lab_learn,
-        lab_platform_value=lab_platform_value
-    )
-
-
-@app.route("/lab/s3/select_mode")
-def s3_select_mode():
-    # Show mode selection page for S3 lab
-    return render_template("lab_mode_select.html", lab_title="Open S3 Bucket Lab", lab_id="s3")
-
-
-@app.route("/lab/s3/start", methods=["POST"])
-def s3_start():
-    # Initialize lab session with selected mode and level
-    mode = request.form.get("mode")
-    level = request.form.get("level")
-    
-    if mode not in ("attack", "defense") or level not in ("Beginner", "Intermediate", "Advanced"):
-        return "Invalid mode or level", 400
-    
-    # Initialize a new lab session for the Open S3 Bucket lab
-    session.clear()
-    session["lab_id"] = uuid.uuid4().hex
-    session["lab_name"] = "Open S3 Bucket"
-    session["lab_state"] = "initialized"
-    session["terminal_output"] = []
-    session["score"] = 0
-    session["attempts"] = 0
-    session["correct_commands"] = 0
-    session["mitigation_success"] = 0
-    session["attack_started_at"] = None
-    session["attack_detected_at"] = None
-    session["mode"] = mode
-    session["level"] = level
-
-    # create fresh per-session log file
-    _ensure_session_log()
-
-    return redirect(url_for("terminal"))
-
-@app.route("/lab/network")
-def network_lab():
-    # Show introduction page for Network Recon lab
-    lab_what = (
-        "The Network Reconnaissance lab simulates enterprise network environments with multiple hosts, services, and potential vulnerabilities. "
-        "You will practice network scanning techniques, service enumeration, vulnerability identification, and network defense strategies. "
-        "This lab mirrors real-world penetration testing scenarios where reconnaissance is the critical first phase of any engagement."
-    )
-    lab_why = (
-        "Network reconnaissance and enumeration are foundational skills in cybersecurity. "
-        "Attackers use these techniques to map networks, identify targets, and find entry points. "
-        "Defenders must understand these methods to implement proper network segmentation, monitoring, and intrusion detection. "
-        "Mastering network recon is essential for both offensive and defensive security roles."
-    )
-    lab_learn = (
-        "• Network mapping and topology discovery using tools like nmap and traceroute\n"
-        "• Service enumeration and version identification\n"
-        "• Vulnerability scanning and assessment\n"
-        "• Network segmentation and access control bypass techniques\n"
-        "• Implementing network defenses (firewalls, IDS/IPS, network monitoring)\n"
-        "• Analyzing network traffic and detecting suspicious activity"
-    )
-    lab_platform_value = (
-        "Network Reconnaissance provides a realistic multi-host environment with simulated services and vulnerabilities. "
-        "Practice advanced reconnaissance techniques safely in a sandbox where all data is fictional. "
-        "Gain practical experience in network mapping, vulnerability assessment, and defense implementation. "
-        "Build expertise in network security without any impact on real systems."
-    )
-    
-    return render_template(
-        "lab_intro.html",
-        lab_title="Network Reconnaissance Lab",
-        lab_id="network",
-        lab_what=lab_what,
-        lab_why=lab_why,
-        lab_learn=lab_learn,
-        lab_platform_value=lab_platform_value
-    )
-
-
-@app.route("/lab/network/select_mode")
-def network_select_mode():
-    # Show mode selection page for Network Recon lab
-    return render_template("lab_mode_select.html", lab_title="Network Reconnaissance Lab", lab_id="network")
-
-
-@app.route("/lab/network/start", methods=["POST"])
-def network_start():
-    # Initialize lab session with selected mode and level
-    mode = request.form.get("mode")
-    level = request.form.get("level")
-    
-    if mode not in ("attack", "defense") or level not in ("Beginner", "Intermediate", "Advanced"):
-        return "Invalid mode or level", 400
-    
-    # Initialize a new lab session for Network Recon
-    session.clear()
-    session["lab_id"] = uuid.uuid4().hex
-    session["lab_name"] = "Network Recon"
-    session["lab_state"] = "initialized"
-    session["terminal_output"] = []
-    session["score"] = 0
-    session["attempts"] = 0
-    session["correct_commands"] = 0
-    session["mitigation_success"] = 0
-    session["attack_started_at"] = None
-    session["attack_detected_at"] = None
-    session["mode"] = mode
-    session["level"] = level
-    session["cheatsheet_views_network"] = 0
-    session["cheatsheet_last_access_network"] = None
-
-    # create fresh per-session log file
-    _ensure_session_log()
-
-    return redirect(url_for("terminal"))
-
 
 @app.route("/lobby", methods=["GET", "POST"])
 def lobby():
-    """Lobby where player selects difficulty level before starting lab."""
     if request.method == "POST":
         level = request.form.get("level")
         if level in ("Beginner", "Intermediate", "Advanced"):
             session["level"] = level
             session.setdefault("terminal_output", []).append(f"[lobby] Selected level: {level}")
-        return redirect(url_for("s3_lab"))
-    # Simple endpoint to show available levels (frontend can use template)
-    conn = None
-    levels = []
-    try:
-        conn = get_s3_db_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT name,description FROM levels ORDER BY id")
-        levels = cur.fetchall()
-    except Exception:
-        levels = [("Beginner", "Slow/lenient AI detection"), ("Intermediate", "Moderate"), ("Advanced", "Aggressive")]
-    finally:
-        try:
-            if conn:
-                conn.close()
-        except Exception:
-            pass
-
+        return redirect(url_for("labs"))
+    
+    levels = [("Beginner", "Novice"), ("Intermediate", "Standard"), ("Advanced", "Hard")]
     return render_template("labs.html", levels=levels)
 
 
@@ -781,156 +745,217 @@ def cheatsheet():
     return render_template("cheatsheet.html", commands=commands, mode=mode)
 
 
-@app.route("/cheatsheet_api")
-def cheatsheet_api():
-    """Return cheatsheet commands as JSON for modal display with lab-specific rate limiting."""
-    import time
-    
-    mode = session.get("mode")
-    lab_type_id = get_session_lab_type()
-    
-    # Determine lab-specific rate limit keys
-    lab_map = {
-        "s3": ("cheatsheet_views_s3", "cheatsheet_last_access_s3"),
-        "pwndora": ("cheatsheet_views_pwndora", "cheatsheet_last_access_pwndora"),
-        "network": ("cheatsheet_views_network", "cheatsheet_last_access_network"),
-    }
-    
-    views_key, access_key = lab_map.get(lab_type_id, ("cheatsheet_views", "cheatsheet_last_access"))
-    
-    # Get current state from session
-    views_count = session.get(views_key, 0)
-    last_access_time = session.get(access_key)
-    current_time = time.time()
-    
-    # Check rate limiting: 3 free views, then 5-minute cooldown
-    if views_count >= 3:
-        if last_access_time is None:
-            # First time hitting limit, set the timer
-            session[access_key] = current_time
-        else:
-            # Check if 5 minutes (300 seconds) have passed
-            time_since_last = current_time - last_access_time
-            if time_since_last < 300:  # 5 minutes = 300 seconds
-                remaining = 300 - time_since_last
-                return jsonify({
-                    'error': 'Rate limit exceeded',
-                    'message': f'Cheatsheet for {lab_type_id} lab available again in {int(remaining)} seconds',
-                    'commands': [],
-                    'mode': mode
-                }), 429
-            else:
-                # 5 minutes have passed, reset the counter for this lab
-                session[views_key] = 0
-                session[access_key] = None
-                views_count = 0
-    
-    # Increment view counter for this lab
-    session[views_key] = views_count + 1
-    remaining_free_views = max(0, 3 - (views_count + 1))
-    
-    commands = []
-    
+@app.route("/commands_api")
+def commands_api():
+    """Return rich command dataset (CMD001-CMD004) for the Commands modal.
+
+    Sources:
+      CMD001 - Linux commands (linux_commands.db)
+      CMD002 - Cyber security commands (lab DBs)
+      CMD003 - Pentest/Kali commands (network_recon_lab.db)
+      CMD004 - AWS CLI commands (open_s3_lab.db)
+
+    NOTE: These commands are for hints/display ONLY.
+          Task completion is handled exclusively by /api/submit_task.
+    """
+    mode    = session.get("mode", "")
+    lab_key = session.get("lab_key", "")
+    lab_type = get_session_lab_type()
+
+    formatted = []
+
+    # ── Pull from lab-specific attack/defense command DB ─────────────────────
     try:
-        conn = get_lab_db_connection(lab_type_id)
-        cur = conn.cursor()
-        if mode == "attack":
-            cur.execute('SELECT name,pattern,hint,example,level,category FROM attack_commands ORDER BY id')
-            rows = cur.fetchall()
-        elif mode == "defense":
-            cur.execute('SELECT name,pattern,hint,example,level,category FROM defense_commands ORDER BY id')
-            rows = cur.fetchall()
+        conn = get_lab_db_connection(lab_type)
+        cur  = conn.cursor()
+
+        if mode == "defense":
+            tables = [("defense_commands", "defense")]
+        elif mode == "attack":
+            tables = [("attack_commands", "attack")]
         else:
-            # return both attack and defense commands when no mode selected
-            cur.execute('SELECT name,pattern,hint,example,level,category FROM attack_commands ORDER BY id')
-            arows = cur.fetchall()
-            cur.execute('SELECT name,pattern,hint,example,level,category FROM defense_commands ORDER BY id')
-            drows = cur.fetchall()
-            rows = arows + drows
+            tables = [("attack_commands", "attack"), ("defense_commands", "defense")]
 
-        for r in rows:
+        for tbl, tbl_mode in tables:
             try:
-                name = r[0]
-                pattern = r[1]
-                hint = r[2]
-                example = r[3]
-                level = r[4]
-                category = r[5]
-            except Exception:
-                name = r['name']
-                pattern = r['pattern']
-                hint = r['hint']
-                example = r['example']
-                level = r.get('level')
-                category = r.get('category')
+                cur.execute(f"""
+                    SELECT name, pattern, hint, example, level, category,
+                           COALESCE(description,'') as description,
+                           COALESCE(expected_output,'') as expected_output,
+                           COALESCE(source,'') as source
+                    FROM {tbl}
+                    ORDER BY
+                        CASE level
+                            WHEN 'Beginner'     THEN 1
+                            WHEN 'Intermediate' THEN 2
+                            WHEN 'Advanced'     THEN 3
+                            ELSE 4
+                        END, id
+                """)
+                for r in cur.fetchall():
+                    formatted.append({
+                        "name":            r[0] or r[1],
+                        "pattern":         r[1],
+                        "hint":            r[2] or "",
+                        "example":         r[3] or r[1],
+                        "level":           r[4] or "Beginner",
+                        "category":        r[5] or "",
+                        "description":     r[6],
+                        "expected_output": r[7],
+                        "source":          r[8],
+                        "mode":            tbl_mode,
+                    })
+            except Exception as e:
+                print(f"[WARNING] commands_api {tbl}: {e}")
 
-            description = hint or category or ""
-            commands.append({
-                'name': name,
-                'pattern': pattern,
-                'description': description,
-                'example': example,
-                'level': level,
-            })
+        conn.close()
     except Exception as e:
-        commands = []
-    finally:
-        try:
-            conn.close()
-        except Exception:
-            pass
+        print(f"[WARNING] commands_api DB error: {e}")
 
-    # Also include Linux commands from the shared linux_commands.db filtered by mode
+    # ── Also pull Linux basics (CMD001) ───────────────────────────────────────
     try:
-        import os
-        linux_db_path = os.path.join(os.path.dirname(__file__), 'data', 'linux_commands.db')
-        lconn = sqlite3.connect(linux_db_path)
-        lcur = lconn.cursor()
-        if mode == 'attack':
-            lcur.execute("SELECT name,pattern,description,example,level,category FROM linux_commands WHERE (mode IS NULL OR mode IN ('attack','both')) ORDER BY id")
-        elif mode == 'defense':
-            lcur.execute("SELECT name,pattern,description,example,level,category FROM linux_commands WHERE (mode IS NULL OR mode IN ('defense','both')) ORDER BY id")
-        else:
-            lcur.execute("SELECT name,pattern,description,example,level,category FROM linux_commands ORDER BY id")
-
-        lrows = lcur.fetchall()
-        for r in lrows:
-            try:
-                lname = r[0]
-                lpattern = r[1]
-                ldesc = r[2]
-                lex = r[3]
-                llevel = r[4]
-                lcat = r[5] or 'Linux Commands'
-            except Exception:
-                lname = r['name']
-                lpattern = r['pattern']
-                ldesc = r.get('description')
-                lex = r.get('example')
-                llevel = r.get('level')
-                lcat = r.get('category') or 'Linux Commands'
-
-            commands.append({
-                'name': lname,
-                'pattern': lpattern,
-                'description': ldesc or lcat,
-                'example': lex,
-                'level': llevel,
-            })
-    except Exception:
-        pass
-    finally:
-        try:
+        linux_db = os.path.join(os.path.dirname(__file__), "data", "linux_commands.db")
+        if os.path.exists(linux_db):
+            lconn = sqlite3.connect(linux_db)
+            lcur  = lconn.cursor()
+            lcur.execute("""
+                SELECT name, pattern, description, example, level, category
+                FROM linux_commands
+                ORDER BY CASE level
+                    WHEN 'Beginner' THEN 1 WHEN 'Intermediate' THEN 2
+                    WHEN 'Advanced' THEN 3 ELSE 4 END
+            """)
+            for r in lcur.fetchall():
+                # Don't duplicate if already in main list
+                if not any(f["pattern"] == r[1] for f in formatted):
+                    formatted.append({
+                        "name":        r[0],
+                        "pattern":     r[1],
+                        "hint":        r[2] or "",
+                        "example":     r[3] or r[1],
+                        "level":       r[4] or "Beginner",
+                        "category":    r[5] or "Linux",
+                        "description": r[2] or "",
+                        "source":      "CMD001",
+                        "mode":        "general",
+                    })
             lconn.close()
-        except Exception:
-            pass
+    except Exception as e:
+        print(f"[WARNING] commands_api linux_db: {e}")
+
+    # Fallback: if DB empty, use labs.json commands list
+    if not formatted:
+        labs    = load_labs()
+        lab     = labs.get(lab_key, {})
+        for cmd in lab.get("commands", []):
+            formatted.append({
+                "name": cmd, "pattern": cmd, "hint": f"Try: {cmd}",
+                "example": cmd, "level": "Beginner", "source": "labs.json",
+            })
 
     return jsonify({
-        'commands': commands,
-        'mode': mode,
-        'remaining_free_views': remaining_free_views,
-        'lab': lab_type_id
+        "commands": formatted,
+        "mode":     mode,
+        "lab":      lab_key,
+        "total":    len(formatted),
     })
+
+
+@app.route("/api/commands_search")
+def api_commands_search():
+    """Search the command datasets by keyword — used for chatbot context.
+
+    Query param: ?q=nmap
+    Returns top 5 matching commands from lab DB + linux DB.
+    """
+    q = (request.args.get("q") or "").strip().lower()
+    if not q or len(q) < 2:
+        return jsonify({"results": []})
+
+    lab_type = get_session_lab_type()
+    results  = []
+
+    try:
+        conn = get_lab_db_connection(lab_type)
+        cur  = conn.cursor()
+        like = f"%{q}%"
+        for tbl in ("attack_commands", "defense_commands"):
+            try:
+                cur.execute(f"""
+                    SELECT name, pattern, hint, example, level, category,
+                           COALESCE(description,''), COALESCE(expected_output,'')
+                    FROM {tbl}
+                    WHERE LOWER(name) LIKE ? OR LOWER(pattern) LIKE ?
+                       OR LOWER(hint) LIKE ? OR LOWER(category) LIKE ?
+                    LIMIT 5
+                """, (like, like, like, like))
+                for r in cur.fetchall():
+                    results.append({
+                        "name": r[0], "pattern": r[1], "hint": r[2],
+                        "example": r[3], "level": r[4], "category": r[5],
+                        "description": r[6], "expected_output": r[7],
+                    })
+            except Exception:
+                pass
+        conn.close()
+    except Exception as e:
+        print(f"[WARNING] api_commands_search: {e}")
+
+    return jsonify({"results": results[:8]})
+
+
+# ── Helper: look up command in DB for hint + expected output ──────────────────
+def get_command_hint_from_db(cmd_text, lab_type):
+    """Return (hint, expected_output, description) for a command from datasets.
+
+    Used by the terminal dispatcher to enrich AI analysis context.
+    Does NOT affect task completion.
+    """
+    try:
+        conn = get_lab_db_connection(lab_type)
+        cur  = conn.cursor()
+        # Try both attack and defense tables
+        for tbl in ("attack_commands", "defense_commands"):
+            try:
+                cur.execute(f"""
+                    SELECT hint, COALESCE(expected_output,''), COALESCE(description,'')
+                    FROM {tbl}
+                    WHERE LOWER(?) LIKE '%' || LOWER(SUBSTR(pattern,1,12)) || '%'
+                       OR LOWER(pattern) LIKE '%' || LOWER(?) || '%'
+                    LIMIT 1
+                """, (cmd_text, cmd_text.split()[0] if cmd_text else ""))
+                row = cur.fetchone()
+                if row:
+                    conn.close()
+                    return row[0] or "", row[1] or "", row[2] or ""
+            except Exception:
+                pass
+        conn.close()
+    except Exception:
+        pass
+    return "", "", ""
+
+
+def get_linux_command_info(cmd_text):
+    """Look up a command in linux_commands.db (CMD001) for description + example."""
+    try:
+        linux_db = os.path.join(os.path.dirname(__file__), "data", "linux_commands.db")
+        if not os.path.exists(linux_db):
+            return "", ""
+        conn = sqlite3.connect(linux_db)
+        cur  = conn.cursor()
+        first_word = cmd_text.strip().split()[0].lower() if cmd_text.strip() else ""
+        cur.execute("""
+            SELECT description, example FROM linux_commands
+            WHERE LOWER(name) = ? OR LOWER(pattern) LIKE ?
+            LIMIT 1
+        """, (first_word, f"{first_word}%"))
+        row = cur.fetchone()
+        conn.close()
+        return (row[0] or "", row[1] or "") if row else ("", "")
+    except Exception:
+        return "", ""
+
 
 
 # ---------------- TERMINAL ENGINE ----------------
@@ -1107,11 +1132,11 @@ def terminal():
         elif re.search(r"cat\s+", cmd, re.I):
             # Read file
             fn = cmd.split(" ", 1)[1].strip()
-            if "config" in fn.lower() or "env" in fn.lower():
+            if "config" in fn.lower() or "env" in fn.lower() or "secret" in fn.lower():
                 append_output("AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE")
                 append_output("AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")
                 append_output("DB_PASSWORD=SuperSecret123!")
-            elif "credential" in fn.lower():
+            elif "credential" in fn.lower() or "passwd" in fn.lower():
                 append_output("root:x:0:0:root:/root:/bin/bash")
                 append_output("admin:x:1000:1000:admin user:/home/admin:/bin/bash")
             else:
@@ -1158,7 +1183,7 @@ def terminal():
 # GROQ AI COMMAND ANALYZER
 # ──────────────────────────────────────────────────────────────────────────────
 
-def call_groq_command_analysis(cmd, output_lines, lab_name, mode, lab_state):
+def call_groq_command_analysis(cmd, output_lines, lab_name, mode, lab_state, dataset_context=""):
     """Call Groq API to analyze a terminal command and return a short AI insight.
 
     This is called after every terminal command to give inline AI feedback.
@@ -1175,25 +1200,25 @@ def call_groq_command_analysis(cmd, output_lines, lab_name, mode, lab_state):
         mode_label = mode or "explore"
 
         system_prompt = (
-            f"You are CADS-AI, a cybersecurity lab terminal assistant for '{lab_name}' lab.\n"
-            f"The student is in {mode_label.upper()} mode. Lab state: {lab_state}.\n\n"
-            "Your job: After the student runs a terminal command, give a SHORT (2-4 line) analysis:\n"
-            "  1. What this command does in a security context\n"
-            "  2. What the output reveals (attack surface, vulnerability, defense status)\n"
-            "  3. ONE specific next command to try (with the exact syntax)\n\n"
-            "RULES:\n"
-            "- Be concise. Max 4 lines total. No long explanations.\n"
-            "- Always suggest 1 concrete next command.\n"
-            "- Use the UNSW-NB15 dataset context when relevant "
-            "(e.g. Reconnaissance=10,491 samples, DoS=12,264 samples).\n"
-            "- Format: plain text only, no markdown headers.\n"
-            "- Start immediately with the insight (no greeting, no 'Sure!')."
+            f"You're CADS-AI, the in-terminal guide for the '{lab_name}' lab.\n"
+            f"Student is in {mode_label.upper()} mode. Lab state: {lab_state}.\n\n"
+            "After each terminal command, drop a quick 2-3 line take:\n"
+            "  • What this command just revealed (security-wise)\n"
+            "  • What it means for the attack/defense\n"
+            "  • ONE clear next step command (exact syntax)\n\n"
+            "Rules:\n"
+            "- Max 3 lines. No fluff, no walls of text.\n"
+            "- Sound like a sharp senior analyst, not a manual. Human tone.\n"
+            "- Suggest next command with exact syntax.\n"
+            "- No greetings, no 'Sure!', no 'Great!'. Just the insight.\n"
+            "- Plain text only. No markdown headers."
         )
 
+        dataset_note = f"\nDataset context: {dataset_context}" if dataset_context else ""
         user_msg = (
             f"Command: {cmd}\n"
-            f"Output:\n{output_preview}\n\n"
-            "Give your 2-4 line security analysis and next step."
+            f"Output:\n{output_preview}{dataset_note}\n\n"
+            "Your 2-3 line security analysis and next step command:"
         )
 
         response = requests.post(
@@ -1233,6 +1258,102 @@ def call_groq_command_analysis(cmd, output_lines, lab_name, mode, lab_state):
         print(f"[WARNING] Groq cmd-analysis error: {e}")
         return ""
 
+
+def get_user_id():
+    # Use lab session ID or default to anonymous if not set
+    if "lab_id" not in session:
+        session["lab_id"] = "user_" + uuid.uuid4().hex[:8]
+    return session["lab_id"]
+
+def get_progress(user_id):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT task_id FROM progress WHERE user_id = ? AND status = 'completed'", (user_id,))
+        solved = [row[0] for row in cur.fetchall()]
+        conn.close()
+        return solved
+    except Exception:
+        return []
+
+def mark_task_completed(user_id, task_id):
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("INSERT OR REPLACE INTO progress (user_id, task_id, status) VALUES (?, ?, 'completed')", (user_id, task_id))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("[DEBUG] Could not save progress:", e)
+
+def checkAnswer(taskId, userAnswer):
+    lab_key = session.get("lab_key", "")
+    mode = session.get("mode", "Attack mode").lower()
+    labs = load_labs()
+    lab = labs.get(lab_key, {})
+    if "defence" in mode or "defense" in mode:
+        tasks = lab.get("tasks_defence", [])
+    else:
+        tasks = lab.get("tasks_attack", [])
+    task = next((t for t in tasks if t["id"] == taskId), None)
+    if not task:
+        return False
+    correct_ans = task.get("answer", "").strip().lower()
+    return userAnswer.strip().lower() == correct_ans
+
+@app.route("/api/tasks", methods=["GET"])
+def api_tasks():
+    lab_key = session.get("lab_key", "")
+    mode = session.get("mode", "Attack mode").lower()
+    labs = load_labs()
+    lab = labs.get(lab_key, {})
+    if "defence" in mode or "defense" in mode:
+        tasks = lab.get("tasks_defence", [])
+    else:
+        tasks = lab.get("tasks_attack", [])
+    
+    user_id = get_user_id()
+    solved = get_progress(user_id)
+    formatted_tasks = []
+    
+    for i, t in enumerate(tasks):
+        is_solved = t["id"] in solved
+        is_locked = False if i == 0 else (tasks[i-1]["id"] not in solved and not is_solved)
+        
+        status = "completed" if is_solved else ("locked" if is_locked else "unlocked")
+        
+        formatted_tasks.append({
+            "id": t["id"],
+            "question": t.get("question", t.get("title", "")),
+            "title": t.get("title", ""),
+            "description": t.get("description", ""),
+            "hint": t.get("hint", ""),
+            "concept": t.get("concept", ""),
+            "theory": t.get("theory", ""),
+            "type": t.get("type", "terminal"),
+            "answer": t.get("answer", ""),
+            "is_solved": is_solved,
+            "locked": is_locked,
+            "status": status
+        })
+    return jsonify({"tasks": formatted_tasks})
+
+@app.route("/api/submit_task", methods=["POST"])
+def api_submit_task():
+    data = request.get_json() or {}
+    task_id = data.get("task_id")
+    answer = data.get("answer", "")
+    
+    user_id = get_user_id()
+    
+    if checkAnswer(task_id, answer):
+        mark_task_completed(user_id, task_id)
+        session["score"] = session.get("score", 0) + 1
+        print(f"[DEBUG] Task {task_id} completed. Answer '{answer}' was correct.")
+        return jsonify({"success": True})
+        
+    print(f"[DEBUG] Task {task_id} failed. Typed '{answer}'")
+    return jsonify({"success": False, "message": "Incorrect answer"})
 
 # ──────────────────────────────────────────────────────────────────────────────
 # AJAX TERMINAL EXECUTE  (used by the JS frontend for no-reload terminal)
@@ -1297,10 +1418,11 @@ def api_terminal_execute():
 
         elif re.search(r"^ls(\s+-[la]+)?(\s+.*)?$", cmd, re.I):
             if lab_type == "s3":
-                append_output("reports  images  README.md  NOTES.txt") if "-l" not in cmd else [
+                append_output("reports  images  README.md  NOTES.txt  secret.txt") if "-l" not in cmd else [
                     append_output("-rw-r--r--  1 user group 4096 Jan 15 10:30 reports"),
                     append_output("-rw-r--r--  1 user group 2048 Jan 15 10:30 images"),
                     append_output("-rw-r--r--  1 user group 1024 Jan 15 10:30 README.md"),
+                    append_output("-rw-------  1 user group  256 Jan 15 10:31 secret.txt"),
                 ]
             elif lab_type == "pwndora":
                 append_output("index.php  admin.php  uploads  README.md")
@@ -1425,11 +1547,11 @@ def api_terminal_execute():
 
         elif re.search(r"cat\s+", cmd, re.I):
             fn = cmd.split(" ", 1)[1].strip()
-            if "config" in fn.lower() or "env" in fn.lower():
+            if "config" in fn.lower() or "env" in fn.lower() or "credential" in fn.lower() or "secret" in fn.lower():
                 append_output("AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE")
                 append_output("AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")
                 append_output("DB_PASSWORD=SuperSecret123!")
-            elif "credential" in fn.lower() or "passwd" in fn.lower():
+            elif "passwd" in fn.lower():
                 append_output("root:x:0:0:root:/root:/bin/bash")
                 append_output("admin:x:1000:1000:admin user:/home/admin:/bin/bash")
             else:
@@ -1511,7 +1633,7 @@ def api_terminal_execute():
             append_output("│ CORE LINUX:       ls, pwd, id, whoami, uname, find, grep, cat, help      │")
             append_output("│ NETWORKING:       nmap, ping, traceroute, netstat, dig, tcpdump          │")
             append_output("├──────────────────────────────────────────────────────────────────────────┤")
-            append_output("│ PRO-TIP: Use the Cheat Sheet (TOP RIGHT) for automated command pasting!  │")
+            append_output("│ PRO-TIP: Use the Commands (TOP RIGHT) for automated command pasting!   │")
             append_output("└──────────────────────────────────────────────────────────────────────────┘")
             outcome = "help"
 
@@ -1520,6 +1642,11 @@ def api_terminal_execute():
             session["terminal_output"] = []
             append_output("Terminal cleared.")
             outcome = "clear"
+
+        elif re.search(r"killall\s*ncat", cmd, re.I):
+            append_output("ncat: process terminated")
+            session["lab_state"] = "mitigation_applied"
+            outcome = "killall_ncat"
 
         else:
             is_recon    = bool(re.search(r"(aws\s+s3\s+ls|enumerate|nmap|whois|dig|traceroute|find|grep|locate)", cmd, re.I))
@@ -1540,7 +1667,7 @@ def api_terminal_execute():
                 outcome = "mitigate_partial"
             else:
                 append_output(f"bash: {cmd.split()[0] if cmd else 'command'}: command not found")
-                append_output("Type 'help' for available commands, or open the Cheat Sheet (🕵️).")
+                append_output("Type 'help' for available commands, or open the Commands (💡).")
                 outcome = "unknown"
 
         # Record the action
@@ -1562,6 +1689,21 @@ def api_terminal_execute():
         all_output   = session.get("terminal_output", [])
         new_lines    = all_output[before_count:]
 
+        # ── Pull dataset context for this command (hints/expected output only)
+        # Used ONLY for AI analysis — does NOT affect task completion
+        db_hint, db_expected, db_desc = get_command_hint_from_db(cmd, lab_type)
+        linux_desc, linux_ex          = get_linux_command_info(cmd)
+
+        dataset_context = ""
+        if db_hint:
+            dataset_context += f"Dataset hint: {db_hint}. "
+        if db_expected:
+            dataset_context += f"Expected output pattern: {db_expected[:120]}. "
+        if db_desc and not db_hint:
+            dataset_context += f"Command purpose: {db_desc}. "
+        if linux_desc and not db_desc:
+            dataset_context += f"Linux knowledge: {linux_desc}. "
+
         # ── Call Groq AI to analyze the command ─────────────────────────────
         ai_analysis = call_groq_command_analysis(
             cmd,
@@ -1569,6 +1711,7 @@ def api_terminal_execute():
             session.get("lab_name", "Cybersecurity Lab"),
             session.get("mode", ""),
             session.get("lab_state", "initialized"),
+            dataset_context,
         )
 
         return jsonify({
@@ -1623,72 +1766,35 @@ def api_logs():
     return jsonify({"events": events, "lab_state": session.get("lab_state")})
 
 
-def is_cybersecurity_question(message):
-    """Check if the question is cybersecurity/ethical hacking related."""
-    cybersecurity_keywords = [
-        'aws', 's3', 'bucket', 'reconnaissance', 'recon', 'scan', 'enumerate', 'vulnerability',
-        'exploit', 'attack', 'defense', 'mitigation', 'secure', 'permission', 'access',
-        'nmap', 'curl', 'command', 'bash', 'shell', 'injection', 'xss', 'sql', 'linux',
-        'network', 'port', 'service', 'target', 'payload', 'technique', 'tool', 'ethical',
-        'hacking', 'security', 'cyber', 'penetration', 'pentest', 'risk', 'threat',
-        'firewall', 'iptables', 'route', 'tcpdump', 'wireshark', 'ssh', 'public', 'private',
-        'key', 'certificate', 'hash', 'encrypt', 'decrypt', 'authentication', 'authorization',
-        'ftp', 'http', 'https', 'telnet', 'dns', 'ldap', 'smb', 'rpc', 'docker', 'container',
-        'api', 'endpoint', 'parameter', 'input', 'validation', 'sanitization', 'code'
-    ]
-    msg_lower = message.lower()
-    return sum(1 for keyword in cybersecurity_keywords if keyword in msg_lower) > 0
-
-
 @app.route('/chatbot_api', methods=['POST'])
 def chatbot_api():
-    """Enhanced chatbot responding ONLY to cybersecurity questions.
-    
-    This endpoint:
-    1. Validates questions are cybersecurity-related
-    2. Uses OpenAI API for intelligent responses (if key configured)
-    3. Falls back to local database for commands & hints
-    4. Lab-specific context and safety checks
-    5. Comprehensive error handling
-    """
     try:
         data = request.get_json() or {}
         msg = (data.get('message') or '').strip()
+        image_data = data.get('image')  # Should be a base64 string or data URL
+        task_context = data.get('task_context')
         
-        if not msg:
-            return jsonify({'reply': 'Please ask a cybersecurity-related question about the current lab (reconnaissance, techniques, defense, commands, etc.).'})
+        if not msg and not image_data:
+            return jsonify({'reply': 'I did not understand. Please ask again.'})
 
-        # Safety: require a started lab session
         if not session.get('lab_id') or not session.get('lab_name'):
             return jsonify({'reply': 'Please start a lab session first (go to a lab introduction page and start it).'})
 
-        # Forbidden/unsafe/illegal checks
-        forbidden_terms = ['bomb', 'kill', 'murder', 'terror', 'weapon', 'how to hack bank', 'attack real', 
-                          'bitcoin', 'ransomware', 'credit card', 'steal', 'girlfriend', 'homework', 'weather', 
-                          'recipe', 'joke', 'sports', 'movie', 'music', 'love', 'dating']
-        low = msg.lower()
-        if any(term in low for term in forbidden_terms):
-            return jsonify({'reply': 'I can only help with cybersecurity and ethical hacking topics related to this lab. Please ask about:\n• Reconnaissance commands\n• Security tools and techniques\n• Vulnerability assessment\n• Defense and mitigation strategies\n• Lab-specific security concepts'})
+        print(f"[DEBUG] Chatbot received: '{msg}' (has image: {bool(image_data)})")
 
-        # Validate if question is cybersecurity-related
-        if not is_cybersecurity_question(msg):
-            return jsonify({'reply': 'This question is not related to cybersecurity or ethical hacking. Please ask about:\n• Reconnaissance commands (nmap, aws s3, curl)\n• Security tools and techniques\n• Vulnerability assessment\n• Defense and mitigation strategies\n• Lab-specific security concepts'})
-
-        # ── Try Groq API first (fast LLM inference + dataset knowledge) ────
         if GROQ_API_KEY:
-            ai_response = call_groq_api(msg, session.get('lab_name', 'Cybersecurity Lab'))
+            ai_response = call_groq_api(msg, session.get('lab_name', 'Cybersecurity Lab'), image_data, task_context)
             if ai_response:
                 return jsonify({'reply': ai_response})
 
-        # ── Fallback to local database lookup ───────────────────────────────
         return get_local_chatbot_response(msg, session.get('lab_name'))
         
     except Exception as e:
         print(f"[ERROR] Chatbot API error: {str(e)}")
-        return jsonify({'reply': 'Assistant is unavailable right now. Please try again in a moment.'})
+        return jsonify({'reply': 'I did not understand. Please ask again.'})
 
 
-def call_groq_api(message, lab_name):
+def call_groq_api(message, lab_name, image_data=None, task_context=None):
     """Call Groq API with dataset-grounded cybersecurity instructions.
 
     Groq provides ultra-fast LLM inference (Llama 3, Mixtral, Gemma).
@@ -1697,6 +1803,8 @@ def call_groq_api(message, lab_name):
     Args:
         message:  User's validated cybersecurity question
         lab_name: Current lab name for context
+        image_data: Base64 string of uploaded image (optional)
+        task_context: Current active mission ID (optional)
 
     Returns:
         str: AI response or None if API call fails
@@ -1706,48 +1814,65 @@ def call_groq_api(message, lab_name):
             print("[DEBUG] GROQ_API_KEY not configured")
             return None
 
-        # ── System prompt: lab context + dataset knowledge ──────────────────
-        system_prompt = f"""You are CADS-AI, an expert cybersecurity lab assistant for the '{lab_name}' lab on the
-Cyber Attack Defense Simulation (CADS) platform.
+        # Gather latest news context if available
+        news_context = ""
+        if _LIVE_CYBER_NEWS:
+            news_context = f"\n\n🔴 LATEST CYBER THREAT INTEL (updated {_LAST_NEWS_FETCH.strftime('%b %d, %Y') if _LAST_NEWS_FETCH else 'recently'}):\n{_LIVE_CYBER_NEWS[:800]}"
 
-You are trained on the UNSW-NB15 network intrusion detection dataset (257,673 real network traffic
-records covering 9 attack categories). Use this dataset knowledge to ground your answers in
-real attack patterns, statistical signatures, and evidence-based defense strategies.
+        # Detect if user wants detailed explanation
+        detail_keywords = ["explain", "detail", "how does", "how do", "what is", "what are",
+                          "tell me more", "elaborate", "deep dive", "in depth", "describe",
+                          "why", "difference between", "compare", "teach me"]
+        wants_detail = any(kw in message.lower() for kw in detail_keywords)
 
-{_CYBER_KNOWLEDGE_PROMPT}
+        brevity_instruction = (
+            "Give a thorough, step-by-step explanation since the user wants details."
+            if wants_detail else
+            "Keep it SHORT — 2 to 3 sentences max unless complexity demands more. No walls of text."
+        )
+        
+        task_instruction = f"Current mission ID is {task_context}. If the user asks a lab question, give guidance related to this mission without giving away the exact answer. If they ask a general question, answer normally." if task_context else "No specific mission context provided. Answer normally."
 
-══ YOUR ROLE ══
-Help students understand cybersecurity concepts, attack techniques, and defense strategies
-EXCLUSIVELY within this educational lab environment. ALL activities are simulated and ethical.
+        system_prompt = f"""Hey! You're CADS-AI, a chill but sharp cybersecurity assistant hanging out with the user in the '{lab_name}' lab.
 
-══ RESPOND ONLY TO ══
-• Reconnaissance and enumeration techniques
-• Security tools and commands (nmap, aws-cli, curl, netcat, wireshark, etc.)
-• Vulnerability assessment and exploitation (ethical/lab only)
-• Defense strategies, mitigations, and hardening
-• Security concepts grounded in the UNSW-NB15 dataset patterns
-• Lab-specific technical guidance and command syntax
-• Intrusion detection and network forensics
+Your personality:
+- Talk like a knowledgeable friend, not a textbook. Be warm, natural, and direct.
+- Skip the corporate "Certainly!" or "Great question!" openers. Just answer.
+- Use emojis occasionally when they add clarity or warmth 🔐💡.
+- You know your stuff deeply — cybersecurity, coding, cloud, general knowledge, casual chat.
 
-══ DO NOT RESPOND TO ══
-• General knowledge, small talk, or non-cybersecurity topics
-• Real-world unauthorized access or illegal activities
-• Off-topic subjects (weather, recipes, jokes, etc.)
+{task_instruction}
 
-══ RESPONSE FORMAT (follow every time) ══
-1. One-line summary of the answer
-2. Bullet points (•) for key information
-3. Command examples in backtick code blocks
-4. Bold **important terms**
-5. Dataset insight: reference actual attack pattern from UNSW-NB15 when relevant
-6. Practical next step or defense tip
-Keep responses 200-350 words. Be technical, accurate, and educational.
+Response style:
+- {brevity_instruction}
+- If the user asks something vague or general, give a quick relevant tip and invite follow-up.
+- Use `code blocks` for commands/code.
+- Bold **key terms** when introducing them.
+- If someone asks a non-security question, just answer it naturally — don't redirect everything to cybersecurity.{news_context}
 
-For off-topic questions respond: "I can only assist with cybersecurity and ethical hacking for this
-lab. Please ask about attack techniques, security commands, vulnerability assessment, or defense
-strategies."""
+Lab context: User is working on '{lab_name}'. Refer to the lab when relevant, but don't force it."""
+
 
         # ── Groq API request ─────────────────────────────────────────────────
+        max_tokens = 600 if wants_detail else 280
+
+        # Support Groq Vision Model if image is attached
+        if image_data:
+            target_model = "llama-3.2-11b-vision-preview" 
+            if image_data.startswith("data:"):
+                # Ensure the url is properly format (e.g. data:image/jpeg;base64,xxxx)
+                pass 
+            else:
+                image_data = f"data:image/jpeg;base64,{image_data}"
+
+            user_content = [
+                {"type": "text", "text": message or "Analyze this image details:"},
+                {"type": "image_url", "image_url": {"url": image_data}}
+            ]
+        else:
+            target_model = GROQ_MODEL
+            user_content = message
+
         response = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={
@@ -1755,14 +1880,14 @@ strategies."""
                 "Content-Type": "application/json",
             },
             json={
-                "model": GROQ_MODEL,
+                "model": target_model,
                 "messages": [
                     {"role": "system", "content": system_prompt},
-                    {"role": "user",   "content": message},
+                    {"role": "user",   "content": user_content},
                 ],
-                "temperature": 0.7,
-                "max_tokens": 512,
-                "top_p": 0.9,
+                "temperature": 0.75,
+                "max_tokens": max_tokens,
+                "top_p": 0.95,
                 "stream": False,
             },
             timeout=20,
@@ -1771,11 +1896,12 @@ strategies."""
         if response.status_code == 200:
             data = response.json()
             if "choices" in data and data["choices"]:
-                reply = data["choices"][0]["message"]["content"].strip()
-                print(f"[DEBUG] Groq API success: model={GROQ_MODEL}, tokens={data.get('usage', {}).get('total_tokens')}")
+                reply = data["choices"][0].get("message", {}).get("content", "").strip()
+                if not reply:
+                    return "I did not understand. Please ask again."
+                print(f"[DEBUG] Chatbot response generated OK.")
                 return reply
-            print(f"[ERROR] Unexpected Groq response format: {data}")
-            return None
+            return "I did not understand. Please ask again."
 
         elif response.status_code == 401:
             print("[ERROR] Groq API: Invalid API key (401)")
@@ -2065,6 +2191,28 @@ def reset_lab():
     return render_template("reset.html")
 
 
+# ---------------- CYBER NEWS STATUS ----------------
+@app.route("/api/news_status")
+def api_news_status():
+    """Return the live cyber threat news cache status and content."""
+    return jsonify({
+        "has_news": bool(_LIVE_CYBER_NEWS),
+        "last_fetched": _LAST_NEWS_FETCH.isoformat() if _LAST_NEWS_FETCH else None,
+        "refresh_days": _NEWS_REFRESH_DAYS,
+        "preview": _LIVE_CYBER_NEWS[:500] if _LIVE_CYBER_NEWS else "",
+        "item_count": len(_LIVE_CYBER_NEWS.split("\n")) if _LIVE_CYBER_NEWS else 0,
+    })
+
+@app.route("/api/news_refresh", methods=["POST"])
+def api_news_refresh():
+    """Manually trigger a cyber news refresh (admin use)."""
+    global _LAST_NEWS_FETCH
+    _LAST_NEWS_FETCH = None  # force refresh
+    threading.Thread(target=_fetch_live_cyber_news, daemon=True).start()
+    return jsonify({"status": "refresh_triggered", "message": "Fetching latest threat intel in the background..."})
+
+
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)
+

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADS — {{ lab.title }} Description</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .desc-header { margin-bottom: 40px; text-align: left; }
+        .desc-header h1 { font-size: 48px; margin-bottom: 12px; }
+        .desc-header p { font-size: 20px; color: var(--dim); }
+
+        .desc-card {
+            background: rgba(102,126,234,0.03);
+            border: 1px solid var(--border);
+            padding: 40px; border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        .desc-card h2 { color: var(--green); font-size: 24px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .desc-card p { font-size: 18px; color: var(--text); opacity: 0.9; line-height: 1.8; }
+        
+        .concepts-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .concepts-list li { background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3); color: var(--cyan); padding: 8px 16px; border-radius: 8px; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="container" style="max-width: 800px; padding-top: 10vh;">
+    <header class="desc-header">
+        <h1 class="gradient-text">{{ lab.title }}</h1>
+        <p>Step 3: Description & Concepts</p>
+    </header>
+
+    <section class="desc-card">
+        <h2><i>🎯</i> Things You Will Learn ({{ session.get('mode', '') }})</h2>
+        <p>In this lab scenario, you will be tackling the following core cybersecurity concepts:</p>
+        <ul class="concepts-list">
+            {% for concept in lab.concepts %}
+                <li>{{ concept }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+        <a href="/lab/{{ lab_id }}/select_mode" class="btn btn-outline" style="padding: 16px 32px;">← Back</a>
+        <a href="/lab/{{ lab_id }}/tasks" class="btn btn-primary" style="padding: 16px 48px; font-size: 18px;">Next: View Tasks →</a>
+    </div>
+</div>
+</body>
+</html>

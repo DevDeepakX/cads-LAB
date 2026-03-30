@@ -1,0 +1,331 @@
+{
+    "s3": {
+        "title": "Open S3 Bucket Misconfiguration",
+        "modes": [
+            "Attack mode",
+            "Defence mode"
+        ],
+        "tasks_attack": [
+            {
+                "id": "s3_atk_1",
+                "title": "Mission 1: S3 Basics",
+                "theory": "Amazon S3 is a scalable cloud storage service. Threat actors often scan for exposed S3 buckets that allow public access without authentication.",
+                "question": "What kind of cloud service is Amazon S3?",
+                "hint": "storage",
+                "answer": "storage",
+                "type": "theory"
+            },
+            {
+                "id": "s3_atk_2",
+                "title": "Mission 2: Finding Public Buckets",
+                "theory": "Public buckets can be discovered via search engines, specialized scanners, or by brute-forcing bucket names. A misconfigured bucket policy causes this exposure.",
+                "question": "What type of policy misconfiguration causes exposure?",
+                "hint": "bucket",
+                "answer": "bucket",
+                "type": "theory"
+            },
+            {
+                "id": "s3_atk_3",
+                "title": "Mission 3: Exploiting Misconfigurations",
+                "theory": "Once an open bucket is found, an attacker can list its contents using the AWS CLI or simply by accessing the bucket URL in a browser.",
+                "question": "Which CLI tool can be used to list contents?",
+                "hint": "aws",
+                "answer": "aws",
+                "type": "theory"
+            },
+            {
+                "id": "s3_atk_4",
+                "title": "Mission 4: Enumerate Bucket",
+                "description": "Use terminal: aws s3 ls s3://open-lab-public",
+                "question": "What text file is found in the bucket?",
+                "hint": "secret.txt",
+                "answer": "secret.txt",
+                "type": "terminal"
+            },
+            {
+                "id": "s3_atk_5",
+                "title": "Mission 5: Access Sensitive Data",
+                "description": "Use terminal: aws s3 cp s3://open-lab-public/secret.txt . && cat secret.txt",
+                "question": "What is the exposed key?",
+                "hint": "AKIAIOSFODNN7EXAMPLE",
+                "answer": "AKIAIOSFODNN7EXAMPLE",
+                "type": "terminal"
+            }
+        ],
+        "tasks_defence": [
+            {
+                "id": "s3_def_1",
+                "title": "Mission 1: IAM Policy",
+                "theory": "IAM policies define permissions. To secure S3, apply the principle of least privilege, ensuring anonymous users cannot read bucket contents.",
+                "question": "What principle ensures users only have needed permissions?",
+                "hint": "least privilege",
+                "answer": "least privilege",
+                "type": "theory"
+            },
+            {
+                "id": "s3_def_2",
+                "title": "Mission 2: Blocking Access",
+                "theory": "AWS provides a Block Public Access feature that overrides bucket policies and ACLs to ensure no public access is granted.",
+                "question": "What AWS feature overrides public bucket policies?",
+                "hint": "block public access",
+                "answer": "block public access",
+                "type": "theory"
+            },
+            {
+                "id": "s3_def_3",
+                "title": "Mission 3: Securing IAM",
+                "theory": "Regularly audit IAM roles and remove any wildcard (*) permissions or excessive grants that could allow unintended access.",
+                "question": "What symbol represents wildcard permissions?",
+                "hint": "*",
+                "answer": "*",
+                "type": "theory"
+            },
+            {
+                "id": "s3_def_4",
+                "title": "Mission 4: Check Permissions",
+                "description": "Use terminal: aws s3api get-bucket-policy --bucket open-lab-public",
+                "question": "What Principal is currently allowed access?",
+                "hint": "*",
+                "answer": "*",
+                "type": "terminal"
+            },
+            {
+                "id": "s3_def_5",
+                "title": "Mission 5: Fix Permissions",
+                "description": "Use terminal: aws s3api delete-bucket-policy --bucket open-lab-public",
+                "question": "What command deletes the insecure policy?",
+                "hint": "delete-bucket-policy",
+                "answer": "delete-bucket-policy",
+                "type": "terminal"
+            }
+        ],
+        "commands": [
+            "aws",
+            "nmap",
+            "cat",
+            "ls",
+            "whoami",
+            "help"
+        ],
+        "flags": []
+    },
+    "network": {
+        "title": "Network Reconnaissance",
+        "modes": [
+            "Attack mode",
+            "Defence mode"
+        ],
+        "tasks_attack": [
+            {
+                "id": "net_atk_1",
+                "title": "Mission 1: Scanning Basics",
+                "theory": "Network scanning identifies active hosts and available services. Nmap is a primary tool used by attackers for reconnaissance.",
+                "question": "What popular tool is used for network scanning?",
+                "hint": "nmap",
+                "answer": "nmap",
+                "type": "theory"
+            },
+            {
+                "id": "net_atk_2",
+                "title": "Mission 2: Finding Open Ports",
+                "theory": "Ports act as communication endpoints. Scanning for open ports reveals potential entry points into a system, such as SSH or HTTP.",
+                "question": "What port protocol is typically used for web traffic?",
+                "hint": "http",
+                "answer": "http",
+                "type": "theory"
+            },
+            {
+                "id": "net_atk_3",
+                "title": "Mission 3: Identifying Services",
+                "theory": "Service fingerprinting allows an attacker to determine the EXACT software version running on an open port, highlighting known vulnerabilities.",
+                "question": "What process determines the software version?",
+                "hint": "fingerprinting",
+                "answer": "fingerprinting",
+                "type": "theory"
+            },
+            {
+                "id": "net_atk_4",
+                "title": "Mission 4: Scan IP",
+                "description": "Use terminal: nmap -sV 10.0.0.5",
+                "question": "Which port is open for SSH?",
+                "hint": "22",
+                "answer": "22",
+                "type": "terminal"
+            },
+            {
+                "id": "net_atk_5",
+                "title": "Mission 5: Banner Grabbing",
+                "description": "Use terminal: ncat 10.0.0.5 22",
+                "question": "What SSH service name was captured?",
+                "hint": "OpenSSH",
+                "answer": "OpenSSH",
+                "type": "terminal"
+            }
+        ],
+        "tasks_defence": [
+            {
+                "id": "net_def_1",
+                "title": "Mission 1: Detecting Scans",
+                "theory": "Intrusion Detection Systems (IDS) can identify port scans by detecting anomalous connection attempts across multiple ports.",
+                "question": "What system identifies anomalous connection attempts?",
+                "hint": "ids",
+                "answer": "ids",
+                "type": "theory"
+            },
+            {
+                "id": "net_def_2",
+                "title": "Mission 2: Closing Ports",
+                "theory": "Unused ports must be closed or blocked by a firewall to reduce the attack surface and prevent unauthorized access.",
+                "question": "What security device blocks unused ports?",
+                "hint": "firewall",
+                "answer": "firewall",
+                "type": "theory"
+            },
+            {
+                "id": "net_def_3",
+                "title": "Mission 3: Monitoring Traffic",
+                "theory": "Continuous monitoring of network traffic logs helps security operators spot potential threats before they escalate into an attack.",
+                "question": "What must be continuously monitored?",
+                "hint": "traffic logs",
+                "answer": "traffic logs",
+                "type": "theory"
+            },
+            {
+                "id": "net_def_4",
+                "title": "Mission 4: View Connections",
+                "description": "Use terminal: netstat -an",
+                "question": "What state indicates a listening port?",
+                "hint": "LISTEN",
+                "answer": "LISTEN",
+                "type": "terminal"
+            },
+            {
+                "id": "net_def_5",
+                "title": "Mission 5: Stop Service",
+                "description": "Use terminal to stop the running ncat service.",
+                "question": "What command did you use to stop the service?",
+                "hint": "Use kill command with service name.",
+                "answer": "killall ncat",
+                "type": "terminal"
+            }
+        ],
+        "commands": [
+            "nmap",
+            "netstat",
+            "cat",
+            "ls",
+            "ncat",
+            "killall"
+        ],
+        "flags": []
+    },
+    "pwndora": {
+        "title": "PwnDora Box",
+        "modes": [
+            "Attack mode",
+            "Defence mode"
+        ],
+        "tasks_attack": [
+            {
+                "id": "pwn_atk_1",
+                "title": "Mission 1: Web Security Basics",
+                "theory": "Web application security protects services against threats. Vulnerabilities often happen due to poor input validation.",
+                "question": "What causes most web vulnerabilities?",
+                "hint": "input validation",
+                "answer": "input validation",
+                "type": "theory"
+            },
+            {
+                "id": "pwn_atk_2",
+                "title": "Mission 2: SQL Injection",
+                "theory": "SQLi allows an attacker to interfere with application queries.",
+                "question": "What does SQLi interfere with?",
+                "hint": "queries",
+                "answer": "queries",
+                "type": "theory"
+            },
+            {
+                "id": "pwn_atk_3",
+                "title": "Mission 3: XSS",
+                "theory": "XSS allows an attacker to compromise interactions and steal cookies.",
+                "question": "What can an attacker steal?",
+                "hint": "cookies",
+                "answer": "cookies",
+                "type": "theory"
+            },
+            {
+                "id": "pwn_atk_4",
+                "title": "Mission 4: Find vulnerable directory",
+                "description": "Use terminal: dir_scan target",
+                "question": "What directory is vulnerable?",
+                "hint": "admin",
+                "answer": "admin",
+                "type": "terminal"
+            },
+            {
+                "id": "pwn_atk_5",
+                "title": "Mission 5: Read configuration",
+                "description": "Use terminal: cat config.php",
+                "question": "What is the DB password?",
+                "hint": "SuperSecret123!",
+                "answer": "SuperSecret123!",
+                "type": "terminal"
+            }
+        ],
+        "tasks_defence": [
+            {
+                "id": "pwn_def_1",
+                "title": "Mission 1: Input Validation",
+                "theory": "Input validation is ensuring data is safe before processing.",
+                "question": "What must be done to data?",
+                "hint": "validation",
+                "answer": "validation",
+                "type": "theory"
+            },
+            {
+                "id": "pwn_def_2",
+                "title": "Mission 2: Parameterized Queries",
+                "theory": "To fix SQLi, use parameterized queries instead of string concatenation.",
+                "question": "What fixes SQLi?",
+                "hint": "parameterized queries",
+                "answer": "parameterized queries",
+                "type": "theory"
+            },
+            {
+                "id": "pwn_def_3",
+                "title": "Mission 3: Content Security Policy",
+                "theory": "CSP mitigates XSS by restricting resources.",
+                "question": "What policy mitigates XSS?",
+                "hint": "csp",
+                "answer": "csp",
+                "type": "theory"
+            },
+            {
+                "id": "pwn_def_4",
+                "title": "Mission 4: Check Logs",
+                "description": "Use terminal: tail access.log",
+                "question": "What IP is attacking?",
+                "hint": "10.0.0.5",
+                "answer": "10.0.0.5",
+                "type": "terminal"
+            },
+            {
+                "id": "pwn_def_5",
+                "title": "Mission 5: Block IP",
+                "description": "Use terminal: iptables -A INPUT -s 10.0.0.5 -j DROP",
+                "question": "What command blocks the IP?",
+                "hint": "iptables",
+                "answer": "iptables",
+                "type": "terminal"
+            }
+        ],
+        "commands": [
+            "curl",
+            "nmap",
+            "cat",
+            "ls",
+            "whoami"
+        ],
+        "flags": []
+    }
+}

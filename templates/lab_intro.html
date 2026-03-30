@@ -3,70 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CADS — {{ lab_title }} Introduction</title>
+    <title>CADS — {{ lab.title }}</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
-        .intro-header { margin-bottom: 60px; text-align: left; }
-        .intro-header h1 { font-size: 52px; margin-bottom: 12px; }
-        .intro-header p { font-size: 20px; color: var(--dim); }
+        .intro-header { margin-bottom: 40px; text-align: left; }
+        .intro-header h1 { font-size: 48px; margin-bottom: 12px; }
 
-        .intro-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
-        }
-        @media (max-width: 800px) { .intro-grid { grid-template-columns: 1fr; } }
-
-        .intro-card {
+        .intro-content {
             background: rgba(102,126,234,0.03);
             border: 1px solid var(--border);
-            padding: 32px; border-radius: 20px;
-            transition: all 0.3s;
+            padding: 40px; border-radius: 20px;
+            margin-bottom: 30px;
         }
-        .intro-card:hover { border-color: var(--purple); background: rgba(102,126,234,0.06); }
-        .intro-card h2 { color: var(--cyan); font-size: 22px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
-        .intro-card h2 i { font-style: normal; font-size: 24px; }
-        .intro-card p { font-size: 15px; color: var(--text); opacity: 0.8; line-height: 1.8; }
-
-        .intro-card.highlight {
-            background: linear-gradient(135deg, rgba(0,255,156,0.08), rgba(102,126,234,0.03));
-            border-color: rgba(0,255,156,0.3);
-        }
-        .intro-card.highlight h2 { color: var(--green); }
+        
+        .intro-section { margin-bottom: 30px; }
+        .intro-section:last-child { margin-bottom: 0; }
+        .intro-section h3 { color: var(--cyan); font-size: 20px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .intro-section p { font-size: 16px; color: var(--text); opacity: 0.9; line-height: 1.8; white-space: pre-line; }
+        
+        .cyber-list { list-style: none; padding: 0; margin-top: 10px; }
+        .cyber-list li { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; color: var(--text); font-size: 16px; opacity: 0.9; }
+        .cyber-list li::before { content: '⚡'; color: var(--green); font-size: 14px; }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" style="max-width: 800px; padding-top: 10vh;">
     <header class="intro-header">
-        <h1 class="gradient-text">{{ lab_title }}</h1>
-        <p>Deployment Readiness Briefing</p>
+        <h1 class="gradient-text">{{ lab.title }}</h1>
     </header>
 
-    <div class="intro-grid">
-        <section class="intro-card">
-            <h2><i>📖</i> Overview</h2>
-            <p>{{ lab_what }}</p>
-        </section>
-
-        <section class="intro-card">
-            <h2><i>🔥</i> Critical Importance</h2>
-            <p>{{ lab_why }}</p>
-        </section>
-
-        <section class="intro-card">
-            <h2><i>🎓</i> Learning Objectives</h2>
-            <p>{{ lab_learn }}</p>
-        </section>
-
-        <section class="intro-card highlight">
-            <h2><i>✨</i> CADS Advantage</h2>
-            <p>{{ lab_platform_value }}</p>
-        </section>
+    <div class="intro-content">
+        <div class="intro-section">
+            <h3>📖 What is it?</h3>
+            <p>{{ lab.intro_what }}</p>
+        </div>
+        
+        <div class="intro-section">
+            <h3>⚠️ How it happens:</h3>
+            <ul class="cyber-list">
+                {% for reason in lab.intro_how %}
+                    <li>{{ reason }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="intro-section">
+            <h3>🎯 What you will learn:</h3>
+            <ul class="cyber-list">
+                {% for concept in lab.intro_learn %}
+                    <li>{{ concept }}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
-    <div style="margin-top: 60px; display: flex; gap: 20px; justify-content: center;">
-        <a href="/labs" class="btn btn-outline" style="padding: 16px 32px;">← Back to Labs</a>
-        <form action="/lab/{{ lab_id }}/select_mode" method="get">
-            <button type="submit" class="btn btn-primary" style="padding: 16px 64px; font-size: 18px;">Proceed to Setup →</button>
-        </form>
+    <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+        <a href="/lab/{{ lab_id }}/select_mode" class="btn btn-outline" style="padding: 16px 32px;">← Back</a>
+        <a href="/lab/{{ lab_id }}/tasks" class="btn btn-primary" style="padding: 16px 48px; font-size: 18px; box-shadow: 0 0 20px rgba(0,245,212,0.4);">Show Tasks →</a>
     </div>
 </div>
 </body>
