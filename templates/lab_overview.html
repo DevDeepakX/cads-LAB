@@ -1,0 +1,8 @@
+{% extends "phase4_base.html" %}
+{% block title %}{{ lab.id }} | CADS{% endblock %}
+{% block content %}
+<section class="lab-hero"><div><span class="lab-id">{{ lab.id }}</span><h1>{{ lab.title }}</h1><p class="lede">{{ lab.scenario }}</p></div><div class="lab-hero-meta"><span class="status-chip">{{ lab.difficulty|upper }}</span><strong>{{ lab.xp }} XP</strong></div></section>
+<section class="overview-grid"><article class="panel"><p class="eyebrow">Scenario</p><h2>Investigate the exposure</h2><p class="body-copy">You are a junior cloud security analyst at ExampleCorp. Investigate the simulated account, understand what happened, and apply a defensible remediation backed by evidence.</p><div class="callout"><span class="status-dot"></span><div><strong>Simulation boundary</strong><p>This environment is isolated from AWS. Commands change only the CADS simulator state.</p></div></div></article><article class="panel objective-preview"><div class="panel-heading"><div><p class="eyebrow">Mission brief</p><h2>{{ lab.objectives|length }} objectives</h2></div></div>{% for objective in lab.objectives %}<div class="objective-row"><span class="objective-number">0{{ loop.index }}</span><span>{{ objective.title }}</span></div>{% endfor %}</article></section>
+<section class="start-strip"><div><p class="eyebrow">Ready when you are</p><h2>Open the cloud environment</h2><p class="muted">Your session starts with a fresh set of simulated resources and event history.</p></div><button class="button button-primary" data-start-lab="{{ lab.id }}">Start lab <span>→</span></button></section>
+<div class="toast" id="page-toast" role="status" aria-live="polite"></div>
+{% endblock %}

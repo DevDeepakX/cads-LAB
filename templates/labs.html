@@ -1,63 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CADS — Available Labs</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        .labs-hero { margin-bottom: 60px; text-align: left; }
-        .labs-hero h1 { font-size: 48px; }
-        .labs-hero p { margin: 0; color: var(--dim); }
-
-        .lab-card {
-            border: 1px solid var(--border);
-            padding: 40px;
-            background: rgba(102,126,234,0.02);
-            border-radius: 24px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            gap: 20px;
-            transition: all 0.3s;
-            position: relative;
-        }
-        .lab-card:hover { transform: translateY(-10px); background: rgba(102,126,234,0.06); border-color: var(--cyan); }
-        .lab-card::after {
-            content: 'LAB-SEC'; position: absolute; bottom: 20px; right: 20px;
-            font-size: 40px; font-weight: 800; opacity: 0.05; letter-spacing: -2px; pointer-events: none;
-        }
-        .lab-card h3 { font-size: 30px; color: var(--green); margin-bottom: 8px; }
-        .lab-card p { font-size: 16px; color: var(--text); opacity: 0.7; line-height: 1.6; }
-        .lab-card .btn { margin-top: auto; }
-    </style>
-</head>
-<body>
-<div class="container">
-    <header class="labs-hero">
-        <h1 class="gradient-text">Laboratory Simulations</h1>
-        <p>Choose an environment to deploy your attack or defense workflows.</p>
-    </header>
-
-    <div class="card-grid">
-        <!-- S3 Lab -->
-        <article class="lab-card">
-            <div class="lab-tag">AWS Security</div>
-            <h3>Open S3 Bucket</h3>
-            <p>S3 bucket misconfiguration happens when bucket permission is public. Learn to find, exploit, and fix exposed cloud storage.</p>
-            <a href="/lab/s3" class="btn btn-primary" style="width: 100%;">DEPLOY LAB →</a>
-        </article>
-
-        <!-- Network Recon Lab -->
-        <article class="lab-card">
-            <div class="lab-tag">Network Analysis</div>
-            <h3>Network Recon</h3>
-            <p>Reconnaissance is the first step in hacking where attacker scans network. Learn scanning, enumeration, and mapping.</p>
-            <a href="/lab/network" class="btn btn-outline" style="width: 100%;">DEPLOY LAB →</a>
-        </article>
-    </div>
-
-    <div style="margin-top: 60px; text-align: center;">
-        <a href="/" class="btn btn-outline" style="font-size: 13px; opacity: 0.6;">← Back to Home</a>
-    </div>
-</div>
-</body>
-</html>
+{% extends "phase4_base.html" %}
+{% block title %}Labs | CADS{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">Training catalog</p><h1>Cloud security labs</h1><p class="lede">Short, focused environments for learning how cloud incidents are discovered, investigated, and remediated.</p></div></section>
+<section class="catalog-toolbar"><div class="filter-set"><label for="category-filter">Category</label><select id="category-filter"><option value="">All categories</option><option>Storage</option><option>Identity</option><option>Network</option><option>Logging</option></select></div><div class="filter-set"><label for="difficulty-filter">Difficulty</label><select id="difficulty-filter"><option value="">All levels</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div><div class="catalog-count" id="labs-count">Loading labs...</div></section>
+<section class="catalog-grid" id="lab-catalog"><p class="empty-state">Loading available labs...</p></section>
+{% endblock %}
+{% block scripts %}<script>window.addEventListener('DOMContentLoaded', async () => { const list = document.getElementById('lab-catalog'); const count = document.getElementById('labs-count'); const data = await (await fetch('/api/labs')).json(); const labs = data.labs || []; const render = () => { const category = document.getElementById('category-filter').value; const difficulty = document.getElementById('difficulty-filter').value; const filtered = labs.filter(lab => (!category || lab.category.includes(category)) && (!difficulty || lab.difficulty === difficulty)); count.textContent = `${filtered.length} available`; list.innerHTML = filtered.length ? filtered.map(lab => `<article class="catalog-card"><div class="catalog-card-top"><span class="lab-id">${lab.id}</span><span class="status-chip">${(lab.status || 'NOT STARTED').toUpperCase()}</span></div><h2>${lab.title}</h2><p>${lab.description || 'Investigate a realistic cloud security scenario in the CADS simulator.'}</p><div class="catalog-meta"><span>${lab.category}</span><span>${(lab.difficulty || 'beginner').toUpperCase()}</span><span>${lab.xp || 0} XP</span></div><a class="button button-primary" href="/labs/${lab.slug}">View lab <span>→</span></a></article>`).join('') : '<p class="empty-state">No labs match these filters.</p>'; }; render(); document.getElementById('category-filter').addEventListener('change', render); document.getElementById('difficulty-filter').addEventListener('change', render); });</script>{% endblock %}

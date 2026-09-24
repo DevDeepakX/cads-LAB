@@ -1,0 +1,65 @@
+{
+  "id": "LAB-001",
+  "slug": "public-s3-bucket",
+  "title": "Public S3 Bucket",
+  "category": "Storage Security",
+  "difficulty": "beginner",
+  "xp": 100,
+  "provider": "simulator",
+  "scenario": "You are a junior cloud security analyst at ExampleCorp. The security team received an alert that a storage bucket may have been unintentionally exposed to the public internet. Your task is to investigate the environment, determine whether the bucket is exposed, identify the security impact, and recommend or apply remediation.",
+  "objectives": [
+    {"id": "OBJ-001", "title": "Enumerate S3 resources", "condition": "list_s3_buckets"},
+    {"id": "OBJ-002", "title": "Identify the publicly accessible bucket", "condition": "bucket_public_access_true"},
+    {"id": "OBJ-003", "title": "Inspect the bucket security configuration", "condition": "bucket_policy_observed"},
+    {"id": "OBJ-004", "title": "Remediate public access", "condition": "bucket_public_access_false"},
+    {"id": "OBJ-005", "title": "Verify the secure configuration", "condition": "bucket_secure_check"}
+  ],
+  "resources": [
+    {
+      "resource_type": "S3_BUCKET",
+      "resource_name": "cads-public-data",
+      "region": "ap-south-1",
+      "configuration": {
+        "public_access": true,
+        "encryption": false,
+        "logging": false,
+        "policy": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::cads-public-data/*"
+          }]
+        },
+        "objects": [
+          "employee-data.csv",
+          "company-config.json",
+          "public-info.txt"
+        ]
+      },
+      "status": "ACTIVE"
+    },
+    {
+      "resource_type": "IAM_ROLE",
+      "resource_name": "cads-s3-readonly",
+      "region": "ap-south-1",
+      "configuration": {"permissions": ["s3:GetObject", "s3:ListBucket"]},
+      "status": "ACTIVE"
+    },
+    {
+      "resource_type": "EC2_INSTANCE",
+      "resource_name": "cads-web-01",
+      "region": "ap-south-1",
+      "configuration": {"instance_type": "t3.micro", "state": "running"},
+      "status": "running"
+    },
+    {
+      "resource_type": "SECURITY_GROUP",
+      "resource_name": "default-sg",
+      "region": "ap-south-1",
+      "configuration": {"inbound_rules": [{"protocol": "tcp", "port": 22, "source": "0.0.0.0/0"}]},
+      "status": "ACTIVE"
+    }
+  ]
+}

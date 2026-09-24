@@ -1,0 +1,53 @@
+{
+  "id": "LAB-003",
+  "slug": "insecure-security-group",
+  "title": "Insecure Security Group",
+  "category": "Network Security",
+  "difficulty": "beginner",
+  "xp": 100,
+  "provider": "simulator",
+  "scenario": "A security group attached to a production web server has administrative SSH port (TCP 22) exposed to the entire public internet (0.0.0.0/0). Enumerate the network security configuration, identify the exposed administrative port, inspect the inbound rules, trigger detection, investigate the finding, and restrict the security group rule to secure the instance.",
+  "objectives": [
+    {"id": "OBJ-001", "title": "Enumerate security groups", "condition": "sg_enumerated"},
+    {"id": "OBJ-002", "title": "Identify publicly exposed administrative access", "condition": "sg_admin_exposed"},
+    {"id": "OBJ-003", "title": "Identify the affected instance", "condition": "sg_instance_identified"},
+    {"id": "OBJ-004", "title": "Inspect inbound security group rules", "condition": "sg_rules_inspected"},
+    {"id": "OBJ-005", "title": "Observe security event and detection", "condition": "sg_event_observed"},
+    {"id": "OBJ-006", "title": "Investigate network exposure finding", "condition": "sg_finding_investigated"},
+    {"id": "OBJ-007", "title": "Restrict or revoke open SSH inbound rule", "condition": "sg_ssh_restricted"},
+    {"id": "OBJ-008", "title": "Verify remediation and secure network state", "condition": "sg_secure_verified"}
+  ],
+  "resources": [
+    {
+      "resource_type": "SECURITY_GROUP",
+      "resource_name": "sg-cads-web",
+      "region": "ap-south-1",
+      "configuration": {
+        "group_id": "sg-01a2b3c4d5e6f7g8h",
+        "group_name": "sg-cads-web",
+        "description": "Web server security group",
+        "vpc_id": "vpc-0a1b2c3d4e5f6g7h8",
+        "inbound_rules": [
+          {"protocol": "tcp", "port": 22, "from_port": 22, "to_port": 22, "source": "0.0.0.0/0", "cidr_ip": "0.0.0.0/0", "description": "SSH Administrative Access"},
+          {"protocol": "tcp", "port": 80, "from_port": 80, "to_port": 80, "source": "0.0.0.0/0", "cidr_ip": "0.0.0.0/0", "description": "HTTP Web Traffic"},
+          {"protocol": "tcp", "port": 443, "from_port": 443, "to_port": 443, "source": "0.0.0.0/0", "cidr_ip": "0.0.0.0/0", "description": "HTTPS Web Traffic"}
+        ]
+      },
+      "status": "ACTIVE"
+    },
+    {
+      "resource_type": "EC2_INSTANCE",
+      "resource_name": "cads-web-server",
+      "region": "ap-south-1",
+      "configuration": {
+        "instance_id": "i-0a1b2c3d4e5f67890",
+        "instance_type": "t3.medium",
+        "state": "running",
+        "security_groups": ["sg-cads-web"],
+        "public_ip": "198.51.100.25",
+        "private_ip": "10.0.1.50"
+      },
+      "status": "running"
+    }
+  ]
+}

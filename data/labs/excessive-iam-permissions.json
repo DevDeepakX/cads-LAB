@@ -1,0 +1,88 @@
+{
+  "id": "LAB-002",
+  "slug": "excessive-iam-permissions",
+  "title": "Excessive IAM Permissions",
+  "category": "Identity & Access Management",
+  "difficulty": "intermediate",
+  "xp": 100,
+  "provider": "simulator",
+  "scenario": "A cloud identity (student-user) has been provisioned with overly broad permissions including iam:AttachUserPolicy. Investigate the identity, identify the dangerous permission, simulate the privilege escalation path, observe the security event and detection, and remediate the policy to enforce least privilege.",
+  "objectives": [
+    {"id": "OBJ-001", "title": "Enumerate the IAM identity", "condition": "iam_user_enumerated"},
+    {"id": "OBJ-002", "title": "List attached user policies", "condition": "iam_policies_listed"},
+    {"id": "OBJ-003", "title": "Inspect policy and identify dangerous permission", "condition": "iam_policy_inspected"},
+    {"id": "OBJ-004", "title": "Simulate privilege escalation action", "condition": "iam_privilege_escalated"},
+    {"id": "OBJ-005", "title": "Observe resulting cloud security event", "condition": "iam_event_observed"},
+    {"id": "OBJ-006", "title": "Investigate excessive privilege finding", "condition": "iam_finding_investigated"},
+    {"id": "OBJ-007", "title": "Remediate excessive permissions", "condition": "iam_permission_remediated"},
+    {"id": "OBJ-008", "title": "Verify dangerous permission is removed", "condition": "iam_least_privilege_verified"}
+  ],
+  "resources": [
+    {
+      "resource_type": "IAM_USER",
+      "resource_name": "student-user",
+      "region": "ap-south-1",
+      "configuration": {
+        "user_name": "student-user",
+        "user_id": "AIDAEXAMPLECORPSTUDENT",
+        "arn": "arn:aws:iam::CADS-000001:user/student-user",
+        "attached_policies": ["ExcessiveDeveloperPolicy"],
+        "dangerous_permissions": ["iam:AttachUserPolicy", "iam:PutUserPolicy"],
+        "escalated": false
+      },
+      "status": "ACTIVE"
+    },
+    {
+      "resource_type": "IAM_POLICY",
+      "resource_name": "ExcessiveDeveloperPolicy",
+      "region": "ap-south-1",
+      "configuration": {
+        "policy_name": "ExcessiveDeveloperPolicy",
+        "policy_arn": "arn:aws:iam::CADS-000001:policy/ExcessiveDeveloperPolicy",
+        "document": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:GetObject",
+                "s3:PutObject",
+                "iam:ListUsers",
+                "iam:GetUser",
+                "iam:ListAttachedUserPolicies",
+                "iam:GetPolicy",
+                "iam:AttachUserPolicy"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      },
+      "status": "ACTIVE"
+    },
+    {
+      "resource_type": "IAM_ROLE",
+      "resource_name": "cads-dev-role",
+      "region": "ap-south-1",
+      "configuration": {
+        "role_name": "cads-dev-role",
+        "arn": "arn:aws:iam::CADS-000001:role/cads-dev-role",
+        "permissions": ["s3:GetObject", "s3:ListBucket"]
+      },
+      "status": "ACTIVE"
+    },
+    {
+      "resource_type": "S3_BUCKET",
+      "resource_name": "cads-dev-artifacts",
+      "region": "ap-south-1",
+      "configuration": {
+        "public_access": false,
+        "encryption": true,
+        "logging": true,
+        "objects": ["build-output.zip", "pipeline-config.yaml"]
+      },
+      "status": "ACTIVE"
+    }
+  ]
+}

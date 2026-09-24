@@ -1,0 +1,7 @@
+{% extends "phase4_base.html" %}
+{% block title %}Progress | CADS{% endblock %}
+{% block content %}
+<section class="page-heading"><div><p class="eyebrow">Progress</p><h1>My learning record</h1><p class="lede">A factual view of completed simulator objectives and available training.</p></div></section>
+<section class="progress-hero panel"><div><p class="eyebrow">Cloud security progress</p><strong id="overall-percent">0%</strong><p class="muted">Completion is calculated from objectives in available labs.</p></div><div class="progress-hero-meter"><div class="meter meter-large"><i id="overall-meter"></i></div><span id="overall-count">0 / 0 labs completed</span></div></section>
+<section class="section-heading"><div><p class="eyebrow">By domain</p><h2>Learning areas</h2></div></section><section id="progress-categories" class="category-grid"><p class="empty-state">Loading progress...</p></section>
+{% endblock %}

@@ -1,0 +1,63 @@
+{
+  "id": "LAB-004",
+  "slug": "cloudtrail-investigation",
+  "title": "CloudTrail Investigation",
+  "category": "Logging & Detection",
+  "difficulty": "intermediate",
+  "xp": 100,
+  "provider": "simulator",
+  "scenario": "The SOC received an alert regarding suspicious activity in the cloud environment. Analyze CloudTrail audit logs, filter events by username and action, reconstruct the attacker's activity sequence from initial console login through reconnaissance, privilege escalation, and access key creation, investigate the finding, and remediate the compromised credential.",
+  "objectives": [
+    {"id": "OBJ-001", "title": "Inspect CloudTrail configuration and trail status", "condition": "trail_status_inspected"},
+    {"id": "OBJ-002", "title": "Query CloudTrail audit event logs", "condition": "trail_events_queried"},
+    {"id": "OBJ-003", "title": "Filter events by suspicious identity", "condition": "trail_user_filtered"},
+    {"id": "OBJ-004", "title": "Identify privilege escalation action", "condition": "trail_privilege_escalation_identified"},
+    {"id": "OBJ-005", "title": "Correlate event timeline and identify affected resource", "condition": "trail_timeline_correlated"},
+    {"id": "OBJ-006", "title": "Investigate suspicious activity finding", "condition": "trail_finding_investigated"},
+    {"id": "OBJ-007", "title": "Remediate compromised credential and identity", "condition": "trail_identity_remediated"},
+    {"id": "OBJ-008", "title": "Verify cloud environment is secured", "condition": "trail_remediation_verified"}
+  ],
+  "resources": [
+    {
+      "resource_type": "CLOUDTRAIL_TRAIL",
+      "resource_name": "cads-management-trail",
+      "region": "ap-south-1",
+      "configuration": {
+        "trail_name": "cads-management-trail",
+        "home_region": "ap-south-1",
+        "is_logging": true,
+        "is_multi_region": true,
+        "s3_bucket_name": "cads-audit-logs",
+        "include_global_service_events": true
+      },
+      "status": "ACTIVE"
+    },
+    {
+      "resource_type": "IAM_USER",
+      "resource_name": "compromised-user",
+      "region": "ap-south-1",
+      "configuration": {
+        "user_name": "compromised-user",
+        "arn": "arn:aws:iam::CADS-000001:user/compromised-user",
+        "attached_policies": ["AdministratorAccess"],
+        "access_keys": [
+          {"access_key_id": "AKIAEXAMPLEROOTKEY", "status": "Active", "create_date": "2026-09-24T10:15:00Z"}
+        ],
+        "compromised": true
+      },
+      "status": "COMPROMISED"
+    },
+    {
+      "resource_type": "S3_BUCKET",
+      "resource_name": "cads-confidential-bucket",
+      "region": "ap-south-1",
+      "configuration": {
+        "public_access": false,
+        "encryption": true,
+        "logging": true,
+        "objects": ["financial-q3.xlsx", "customer-pii.parquet"]
+      },
+      "status": "ACTIVE"
+    }
+  ]
+}
