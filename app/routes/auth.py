@@ -13,9 +13,18 @@ def auth_health():
     return jsonify({"status": "ok", "module": "auth-foundation"})
 
 
+@auth_bp.route("/")
+def index():
+    if current_user():
+        return redirect(url_for("dashboard.dashboard"))
+    return redirect(url_for("auth.login"))
+
+
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
+        if current_user():
+            return redirect(url_for("dashboard.dashboard"))
         return render_template("auth.html", mode="register")
     if not csrf_valid():
         return jsonify({"error": "CSRF validation failed"}), 400
@@ -43,6 +52,8 @@ def register():
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
+        if current_user():
+            return redirect(url_for("dashboard.dashboard"))
         return render_template("auth.html", mode="login")
     if not csrf_valid():
         return jsonify({"error": "CSRF validation failed"}), 400

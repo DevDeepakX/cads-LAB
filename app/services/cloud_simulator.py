@@ -19,6 +19,7 @@ ALLOWED_COMMANDS = {
     "aws s3api get-bucket-policy",
     "aws s3api get-public-access-block",
     "aws s3api get-bucket-encryption",
+    "aws s3api get-bucket-logging",
     "aws s3api put-public-access-block",
     "aws s3 cp",
     "aws ec2 describe-instances",

@@ -75,10 +75,18 @@ def create_app(config_name: str | None = None):
     def conflict(error):
         return jsonify({"error": "Conflict"}), 409
 
+    @app.errorhandler(ValueError)
+    def handle_value_error(error):
+        if request.path.startswith("/api/") or request.accept_mimetypes.best == "application/json":
+            return jsonify({"error": str(error)}), 400
+        return str(error), 400
+
     @app.errorhandler(500)
     def internal_error(error):
         app.logger.exception("Unhandled application error")
-        return jsonify({"error": "Internal server error"}), 500
+        if request.path.startswith("/api/") or request.accept_mimetypes.best == "application/json":
+            return jsonify({"error": "Internal server error"}), 500
+        return "Internal server error", 500
 
     return app
 

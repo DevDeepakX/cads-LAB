@@ -7,6 +7,84 @@
   "xp": 100,
   "provider": "simulator",
   "scenario": "A cloud identity (student-user) has been provisioned with overly broad permissions including iam:AttachUserPolicy. Investigate the identity, identify the dangerous permission, simulate the privilege escalation path, observe the security event and detection, and remediate the policy to enforce least privilege.",
+  "learning": {
+    "concept": "AWS Identity and Access Management (IAM) controls authentication and authorization across cloud resources. IAM identities (Users, Groups, and Roles) are granted permissions through IAM Policies—JSON documents defining explicit Effects (Allow/Deny), Actions (e.g. s3:GetObject, iam:AttachUserPolicy), and Resources. The principle of least privilege dictates that identities must be granted only the minimum permissions necessary to perform their legitimate duties.",
+    "security_risk": "When an IAM user or role is granted overly permissive administrative actions (such as iam:AttachUserPolicy, iam:PutUserPolicy, or iam:CreateAccessKey), a user can modify their own or another identity's policy to attach AdministratorAccess. This transforms a low-privileged developer or contractor identity into a full cloud administrator (privilege escalation).",
+    "why_it_matters": "Privilege escalation allows adversaries or rogue insiders to bypass organizational boundaries, access confidential customer databases, deploy unauthorized compute infrastructure, delete backups, and disable security controls or audit trails. Compromised IAM credentials with escalation paths represent an existential risk to cloud tenants.",
+    "what_you_will_investigate": [
+      "Identify the active IAM identity and surrounding user landscape.",
+      "Enumerate attached IAM policies and examine their detailed version documents.",
+      "Analyze allowed IAM actions to identify dangerous privilege escalation vectors.",
+      "Simulate an unauthorized privilege escalation action to test the vulnerability.",
+      "Review security telemetry and detection findings triggered by the action.",
+      "Remediate the overly permissive policy to restore least privilege and verify the fix."
+    ],
+    "investigation_method": [
+      "1. Identity Reconnaissance: Use STS and IAM get-user commands to confirm the caller identity.",
+      "2. Policy Discovery: List policies attached directly to the user identity.",
+      "3. Policy Document Inspection: Retrieve the policy version document and inspect individual Action statements.",
+      "4. Vulnerability Analysis: Identify permissions that allow modifying IAM configurations (e.g., iam:AttachUserPolicy).",
+      "5. Attack Path Simulation: Execute the dangerous action to observe resulting telemetry and security findings.",
+      "6. Remediation & Hardening: Detach excessive policies, enforce restricted permissions, and verify least privilege."
+    ],
+    "commands": [
+      {
+        "command": "aws sts get-caller-identity",
+        "purpose": "Returns details about the IAM identity whose credentials are being used.",
+        "why_used": "Confirms the current account ID, user ID, and active ARN.",
+        "example": "aws sts get-caller-identity",
+        "explanation": "Standard starting command for cloud identity reconnaissance."
+      },
+      {
+        "command": "aws iam get-user",
+        "purpose": "Retrieves information about the specified or current IAM user.",
+        "why_used": "Inspects user creation dates, paths, and user ID metadata.",
+        "example": "aws iam get-user",
+        "explanation": "Obtains identity profile information."
+      },
+      {
+        "command": "aws iam list-users",
+        "purpose": "Lists all IAM users in the cloud account.",
+        "why_used": "Enumerates other identities to understand the scope of user accounts.",
+        "example": "aws iam list-users",
+        "explanation": "Discovers the full user inventory in the tenant."
+      },
+      {
+        "command": "aws iam list-attached-user-policies --user-name <username>",
+        "purpose": "Lists all managed policies attached to the specified user.",
+        "why_used": "Discovers which policy ARNs govern the target user's permissions.",
+        "example": "aws iam list-attached-user-policies --user-name student-user",
+        "explanation": "Identifies policy attachments for permission analysis."
+      },
+      {
+        "command": "aws iam get-policy --policy-arn <policy-arn>",
+        "purpose": "Retrieves metadata regarding a specific managed policy.",
+        "why_used": "Inspects default version ID and attachment counts.",
+        "example": "aws iam get-policy --policy-arn arn:aws:iam::CADS-000001:policy/ExcessiveDeveloperPolicy",
+        "explanation": "Obtains managed policy structure details."
+      },
+      {
+        "command": "aws iam get-policy-version --policy-arn <policy-arn> --version-id v1",
+        "purpose": "Retrieves the JSON policy document containing allowed and denied Actions.",
+        "why_used": "Inspects the exact permission statements for dangerous permissions.",
+        "example": "aws iam get-policy-version --policy-arn arn:aws:iam::CADS-000001:policy/ExcessiveDeveloperPolicy --version-id v1",
+        "explanation": "Audits allowed actions for privilege escalation vulnerabilities."
+      },
+      {
+        "command": "aws iam attach-user-policy --user-name <user> --policy-arn <policy-arn>",
+        "purpose": "Attaches a managed policy to an IAM user.",
+        "why_used": "Simulates privilege escalation in training environments to observe detection triggers.",
+        "example": "aws iam attach-user-policy --user-name student-user --policy-arn arn:aws:iam::aws:policy/AdministratorAccess",
+        "explanation": "Simulates policy attachment to verify defensive monitoring."
+      }
+    ],
+    "defense": "To defend cloud identities: (1) Enforce Least Privilege by scoping IAM policies strictly to required actions and specific resource ARNs. (2) Avoid granting IAM write permissions (iam:AttachUserPolicy, iam:PutUserPolicy, iam:CreateAccessKey) to non-administrative identities. (3) Implement IAM Permission Boundaries and AWS Organizations Service Control Policies (SCPs) to set absolute maximum permission limits. (4) Continuously monitor high-severity IAM API calls using CloudTrail and automated detection rules.",
+    "key_takeaways": [
+      "Permissions on IAM itself (like iam:AttachUserPolicy) can allow an attacker to grant themselves full administrative rights.",
+      "Always inspect the JSON policy statements rather than relying solely on policy names.",
+      "Least privilege must be paired with continuous behavioral auditing and detection."
+    ]
+  },
   "objectives": [
     {"id": "OBJ-001", "title": "Enumerate the IAM identity", "condition": "iam_user_enumerated"},
     {"id": "OBJ-002", "title": "List attached user policies", "condition": "iam_policies_listed"},

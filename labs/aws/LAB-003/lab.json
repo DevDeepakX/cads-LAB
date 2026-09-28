@@ -7,6 +7,70 @@
   "xp": 100,
   "provider": "simulator",
   "scenario": "A security group attached to a production web server has administrative SSH port (TCP 22) exposed to the entire public internet (0.0.0.0/0). Enumerate the network security configuration, identify the exposed administrative port, inspect the inbound rules, trigger detection, investigate the finding, and restrict the security group rule to secure the instance.",
+  "learning": {
+    "concept": "Amazon EC2 Security Groups act as stateful virtual firewalls controlling inbound and outbound network traffic for compute instances. Rules specify allowed protocols (e.g. TCP, UDP, ICMP), destination port numbers (e.g. 22 for SSH, 80 for HTTP, 443 for HTTPS), and source/destination CIDR IP blocks. By default, security groups deny all inbound traffic unless explicitly permitted by an ingress rule.",
+    "security_risk": "Configuring an ingress rule that allows administrative protocols (such as SSH on TCP port 22 or RDP on TCP port 3389) from the entire internet ('0.0.0.0/0') exposes the instance management interface to anyone worldwide. Automated botnets and adversaries constantly scan the public IPv4 space for exposed port 22 to launch brute-force attacks, exploit SSH daemon vulnerabilities, and attempt unauthorized logins.",
+    "why_it_matters": "Exposed administrative ports dramatically increase the external attack surface of cloud workloads. If credentials are weak, leaked, or software vulnerabilities exist, an attacker can gain direct shell access to the virtual machine, pivot laterally across the VPC, compromise attached IAM instance profiles, and exfiltrate internal application data.",
+    "what_you_will_investigate": [
+      "Enumerate existing security groups and inspect their metadata.",
+      "Analyze inbound security group rules to identify overly permissive CIDR blocks.",
+      "Identify which EC2 workload instances are protected by the exposed security group.",
+      "Observe network security telemetry and automated detection findings.",
+      "Investigate the network exposure finding and formulate a remediation plan.",
+      "Restrict or revoke the open administrative rule and verify the hardened network state."
+    ],
+    "investigation_method": [
+      "1. Network Inventory: Describe all security groups in the VPC to understand the firewall architecture.",
+      "2. Rule Auditing: Query security group rules specifically filtering for inbound TCP port 22 with source 0.0.0.0/0.",
+      "3. Workload Mapping: Describe EC2 instances to correlate the vulnerable security group with running virtual machines.",
+      "4. Threat Analysis: Review cloud telemetry and GuardDuty/SOC detection alerts for network exposures.",
+      "5. Remediation: Revoke the unrestricted 0.0.0.0/0 ingress rule or replace it with a restricted bastion/VPN CIDR.",
+      "6. Verification: Query the rules again to ensure port 22 is no longer reachable from the public internet."
+    ],
+    "commands": [
+      {
+        "command": "aws ec2 describe-security-groups",
+        "purpose": "Lists all security groups in the account and their general configuration.",
+        "why_used": "Discovers security group IDs, names, descriptions, and associated VPCs.",
+        "example": "aws ec2 describe-security-groups",
+        "explanation": "Primary command for firewall inventory discovery."
+      },
+      {
+        "command": "aws ec2 describe-security-group-rules",
+        "purpose": "Lists individual inbound and outbound security group rules.",
+        "why_used": "Audits port numbers, protocols, and source CIDRs across all security groups.",
+        "example": "aws ec2 describe-security-group-rules",
+        "explanation": "Identifies overly permissive ingress rules exposing administrative ports."
+      },
+      {
+        "command": "aws ec2 describe-instances",
+        "purpose": "Describes EC2 virtual machine instances and their network attachments.",
+        "why_used": "Determines which instances are attached to specific security groups and their public IPs.",
+        "example": "aws ec2 describe-instances",
+        "explanation": "Correlates firewall rules with active cloud workloads."
+      },
+      {
+        "command": "aws ec2 revoke-security-group-ingress --group-name <group> --port <port> --cidr <cidr>",
+        "purpose": "Removes an inbound ingress rule from a security group.",
+        "why_used": "Remediates network exposure by eliminating unrestricted access rules.",
+        "example": "aws ec2 revoke-security-group-ingress --group-name sg-cads-web --port 22 --cidr 0.0.0.0/0",
+        "explanation": "Closes exposed ports to secure the instance."
+      },
+      {
+        "command": "aws ec2 authorize-security-group-ingress --group-name <group> --port <port> --cidr <cidr>",
+        "purpose": "Adds a restricted inbound ingress rule to a security group.",
+        "why_used": "Grants access only from trusted corporate IP ranges or VPN subnets.",
+        "example": "aws ec2 authorize-security-group-ingress --group-name sg-cads-web --port 22 --cidr 10.0.0.0/16",
+        "explanation": "Applies principle of least privilege to network ingress."
+      }
+    ],
+    "defense": "To defend cloud network perimeters: (1) Never expose administrative ports (TCP 22 for SSH, TCP 3389 for RDP) to 0.0.0.0/0. (2) Use AWS Systems Manager Session Manager (SSM) for secure shell access without opening any inbound firewall ports or public IPs. (3) If direct SSH is mandatory, restrict access to specific trusted bastion host IP addresses or corporate VPN CIDRs. (4) Use automated configuration audits (AWS Config) to detect and automatically remediate unrestricted ingress rules.",
+    "key_takeaways": [
+      "Source 0.0.0.0/0 means every device connected to the internet can attempt to connect to that port.",
+      "Security groups are stateful: allowing inbound traffic automatically permits the return outbound traffic.",
+      "Modern cloud architectures replace public SSH ingress with private endpoints and Session Manager."
+    ]
+  },
   "objectives": [
     {"id": "OBJ-001", "title": "Enumerate security groups", "condition": "sg_enumerated"},
     {"id": "OBJ-002", "title": "Identify publicly exposed administrative access", "condition": "sg_admin_exposed"},

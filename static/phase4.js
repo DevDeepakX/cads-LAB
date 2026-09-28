@@ -1,10 +1,39 @@
 (() => {
   const json = async (url, options = {}) => {
     options.headers = {...(options.headers || {})};
-    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase())) options.headers['X-CSRFToken'] = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    if (['POST', 'PUT', 'PATCH', 'DELETE'].includes((options.method || 'GET').toUpperCase())) {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+      if (csrfToken) {
+        options.headers['X-CSRFToken'] = csrfToken;
+      }
+    }
     const response = await fetch(url, options);
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Request failed');
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+    if (contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (err) {
+        data = { error: 'Invalid JSON response from server' };
+      }
+    } else {
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Authentication required');
+        } else if (response.status === 403) {
+          throw new Error('Access forbidden');
+        } else if (response.status === 404) {
+          throw new Error('Resource not found');
+        } else {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+      }
+      throw new Error('Expected JSON response but received non-JSON content');
+    }
+    if (!response.ok) {
+      const message = data?.message || data?.error || `Request failed with status ${response.status}`;
+      throw new Error(message);
+    }
     return data;
   };
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
@@ -43,7 +72,20 @@
     document.getElementById('progress-categories').innerHTML = entries.length ? entries.map(([name, item]) => { const percent = item.total ? Math.round(item.completed / item.total * 100) : 0; return `<article class="category-card"><span class="eyebrow">Learning area</span><h3>${esc(name)}</h3><strong>${item.completed} / ${item.total}</strong><p class="muted">labs completed</p><div class="meter"><i style="width:${percent}%"></i></div></article>`; }).join('') : '<p class="empty-state">No learning areas are available.</p>';
   }
 
-  async function startLab(button) { try { const data = await json(`/api/labs/${encodeURIComponent(button.dataset.startLab)}/start`, {method:'POST'}); window.location.href = `/lab/${encodeURIComponent(data.lab.lab_id)}`; } catch (error) { toast(error.message); } }
+  async function startLab(button) {
+    const labIdentifier = button?.dataset?.startLab;
+    if (!labIdentifier) {
+      toast('No lab identifier provided');
+      return;
+    }
+    try {
+      const data = await json(`/api/labs/${encodeURIComponent(labIdentifier)}/start`, {method:'POST'});
+      const targetId = data?.lab?.lab_id || data?.lab?.id || labIdentifier;
+      window.location.href = `/lab/${encodeURIComponent(targetId)}`;
+    } catch (error) {
+      toast(error.message);
+    }
+  }
   document.querySelector('[data-start-lab]')?.addEventListener('click', event => startLab(event.currentTarget));
 
   const labId = window.CADS_LAB_ID;

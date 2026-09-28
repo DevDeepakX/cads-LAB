@@ -3,8 +3,7 @@ import json
 from flask import Blueprint, current_app, jsonify, render_template, request, session
 
 from app.security.auth import csrf_protected, current_user, login_required
-from app.services.lab_engine import LabEngine, get_lab_by_slug
-from app.services.lab_engine import get_lab_session
+from app.services.lab_engine import LabEngine, get_lab_by_slug, get_lab_session, load_lab_definition
 
 labs_bp = Blueprint("labs", __name__)
 _engine = LabEngine()
@@ -17,21 +16,32 @@ def _lab_engine():
 @labs_bp.route("/api/labs")
 def list_labs():
     data = []
+    engine = _lab_engine()
     for lab_id in ["LAB-001", "LAB-002", "LAB-003", "LAB-004"]:
         try:
-            lab = _lab_engine().load_lab(lab_id)
+            lab = engine.load_lab(lab_id)
         except ValueError:
             continue
+        status = "NOT STARTED"
+        current_lab = session.get("lab_id")
+        if current_lab:
+            current_lab_def = load_lab_definition(current_lab)
+            curr_ids = {str(current_lab)}
+            if current_lab_def:
+                curr_ids.update({str(current_lab_def.get("id")), str(current_lab_def.get("slug"))})
+            if lab.get("id") in curr_ids or lab.get("slug") in curr_ids:
+                status = "IN PROGRESS"
         data.append({
             "id": lab.get("id"),
             "slug": lab.get("slug"),
             "title": lab.get("title"),
-            "description": lab.get("scenario", ""),
+            "description": lab.get("scenario", "") or lab.get("description", ""),
             "difficulty": lab.get("difficulty", "beginner"),
             "xp": lab.get("xp", 100),
             "modes": ["cloud"],
             "category": lab.get("category", "Cloud Security"),
-            "status": "IN PROGRESS" if session.get("lab_id") == lab.get("id") else "NOT STARTED",
+            "status": status,
+            "objectives": lab.get("objectives", []),
         })
     return jsonify({"labs": data})
 
@@ -41,11 +51,15 @@ def list_labs():
 @csrf_protected
 def start_lab(lab_id):
     engine = _lab_engine()
-    lab = engine.load_lab(lab_id)
-    session_id = engine.start_session(lab_id, current_user()["id"])
-    session["lab_id"] = lab["id"]
+    try:
+        lab = engine.load_lab(lab_id)
+    except ValueError:
+        return jsonify({"error": "Lab not found"}), 404
+    canonical_id = lab["id"]
+    session_id = engine.start_session(canonical_id, current_user()["id"])
+    session["lab_id"] = canonical_id
     session["lab_session_id"] = session_id
-    return jsonify({"status": "started", "session_id": session_id, "lab": engine.initialize_lab(lab_id)})
+    return jsonify({"status": "started", "session_id": session_id, "lab": engine.initialize_lab(canonical_id)})
 
 
 @labs_bp.route("/api/labs/<lab_id>/state")
@@ -130,9 +144,40 @@ def reset_lab(lab_id):
 def _session_or_404(lab_id):
     session_id = session.get("lab_session_id")
     user = current_user()
-    record = get_lab_session(session_id, current_app.config.get("DATABASE_URL")) if session_id else None
-    if not session_id or not user or session.get("lab_id") not in {lab_id, str(lab_id)} or not record or str(record.get("user_id")) != str(user["id"]):
+    if not user:
+        return None, (jsonify({"error": "Authentication required"}), 401)
+    if not session_id:
         return None, (jsonify({"error": "No active lab session"}), 404)
+    record = get_lab_session(session_id, current_app.config.get("DATABASE_URL"))
+    if not record:
+        return None, (jsonify({"error": "No active lab session"}), 404)
+    if str(record.get("user_id")) != str(user["id"]):
+        return None, (jsonify({"error": "Forbidden"}), 403)
+
+    lab_def = load_lab_definition(lab_id)
+    allowed_ids = {str(lab_id)}
+    if lab_def:
+        allowed_ids.update({str(lab_def.get("id")), str(lab_def.get("slug"))})
+
+    session_lab = session.get("lab_id")
+    session_lab_def = load_lab_definition(session_lab) if session_lab else None
+    session_allowed_ids = {str(session_lab)} if session_lab else set()
+    if session_lab_def:
+        session_allowed_ids.update({str(session_lab_def.get("id")), str(session_lab_def.get("slug"))})
+
+    if record.get("metadata"):
+        try:
+            meta = json.loads(record["metadata"])
+            if meta.get("lab_id"):
+                session_allowed_ids.add(str(meta["lab_id"]))
+            if meta.get("slug"):
+                session_allowed_ids.add(str(meta["slug"]))
+        except Exception:
+            pass
+
+    if not allowed_ids.intersection(session_allowed_ids):
+        return None, (jsonify({"error": "No active lab session for this lab"}), 404)
+
     return session_id, None
 
 
@@ -213,22 +258,29 @@ def get_timeline(lab_id):
 
 
 @labs_bp.route("/labs")
+@login_required
 def labs_page():
     return render_template("labs.html")
 
 
 @labs_bp.route("/labs/<slug>")
+@login_required
 def lab_detail(slug):
-    lab = get_lab_by_slug(slug)
+    lab = get_lab_by_slug(slug) or load_lab_definition(slug)
     if not lab:
-        return jsonify({"error": "Lab not found"}), 404
+        if request.accept_mimetypes.best == "application/json" or request.path.startswith("/api/"):
+            return jsonify({"error": "Lab not found"}), 404
+        return "Lab not found", 404
     return render_template("lab_overview.html", lab=lab)
 
 
 @labs_bp.route("/lab/<lab_id>")
+@login_required
 def lab_workspace(lab_id):
     try:
         lab = _lab_engine().load_lab(lab_id)
     except ValueError:
-        return jsonify({"error": "Lab not found"}), 404
+        if request.accept_mimetypes.best == "application/json" or request.path.startswith("/api/"):
+            return jsonify({"error": "Lab not found"}), 404
+        return "Lab not found", 404
     return render_template("lab_workspace.html", lab=lab)

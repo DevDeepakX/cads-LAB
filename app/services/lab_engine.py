@@ -15,15 +15,37 @@ def _utc_now():
 def _lab_paths():
     base = Path(__file__).resolve().parents[2]
     return [
-        base / "data" / "labs",
-        base / "labs",
         base / "labs" / "aws",
+        base / "labs",
+        base / "data" / "labs",
     ]
 
 
+
 def load_lab_definition(slug_or_id: str):
+    if slug_or_id is None:
+        return None
     slug = str(slug_or_id).strip()
+    if not slug:
+        return None
     candidate_names = {slug, slug.replace("-", "_"), slug.replace("_", "-"), slug.upper(), slug.lower()}
+    num_to_lab = {"1": "LAB-001", "2": "LAB-002", "3": "LAB-003", "4": "LAB-004"}
+    if slug in num_to_lab:
+        candidate_names.add(num_to_lab[slug])
+
+    try:
+        conn = get_db_connection()
+        row = conn.execute("SELECT id, lab_id, slug FROM labs WHERE id = ? OR lab_id = ? OR slug = ?", (slug, slug, slug)).fetchone()
+        conn.close()
+        if row:
+            if row["lab_id"]:
+                candidate_names.add(str(row["lab_id"]))
+                candidate_names.add(str(row["lab_id"]).upper())
+            if row["slug"]:
+                candidate_names.add(str(row["slug"]))
+    except Exception:
+        pass
+
     for folder in _lab_paths():
         if not folder.exists():
             continue
@@ -32,7 +54,15 @@ def load_lab_definition(slug_or_id: str):
                 payload = json.loads(file.read_text(encoding="utf-8"))
             except Exception:
                 continue
-            if payload.get("slug") in candidate_names or payload.get("id") in candidate_names:
+            p_id = str(payload.get("id", ""))
+            p_slug = str(payload.get("slug", ""))
+            if p_slug in candidate_names or p_id in candidate_names or p_id.upper() in candidate_names:
+                if "scenario" in payload and "description" not in payload:
+                    payload["description"] = payload["scenario"]
+                elif "description" in payload and "scenario" not in payload:
+                    payload["scenario"] = payload["description"]
+                if "objectives" not in payload:
+                    payload["objectives"] = []
                 return payload
     return None
 
@@ -65,10 +95,13 @@ def create_lab_record(slug, title, description="", category="Cloud Security", di
 
 
 def get_lab_by_slug(slug):
+    lab_def = load_lab_definition(slug)
+    if lab_def:
+        return lab_def
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT * FROM labs WHERE slug = ?", (slug,))
+        cur.execute("SELECT * FROM labs WHERE slug = ? OR lab_id = ? OR id = ?", (slug, slug, slug))
         row = cur.fetchone()
         conn.close()
     except Exception:
@@ -76,8 +109,17 @@ def get_lab_by_slug(slug):
     if row:
         payload = dict(row)
         payload["metadata"] = json.loads(payload.get("metadata") or "{}")
+        meta_id = payload.get("metadata", {}).get("lab_id") or payload.get("lab_id")
+        if meta_id:
+            full_def = load_lab_definition(meta_id)
+            if full_def:
+                return full_def
+        if "description" in payload and "scenario" not in payload:
+            payload["scenario"] = payload["description"]
+        if "objectives" not in payload:
+            payload["objectives"] = []
         return payload
-    return load_lab_definition(slug)
+    return None
 
 
 def create_lab_session(user_id, lab_id, status="NOT_STARTED", metadata=None):
@@ -146,35 +188,8 @@ class LabEngine:
             "provider": lab.get("provider", "simulator"),
         }
 
-    def start_session(self, lab_id, user_id="student"):
-        lab = self.load_lab(lab_id)
-        catalog_id = 1
-        if self.db_url:
-            conn = get_db_connection(self.db_url)
-            catalog = conn.execute("SELECT id FROM labs WHERE slug = ? OR lab_id = ? LIMIT 1", (lab["slug"], lab["id"])).fetchone()
-            if catalog:
-                catalog_id = catalog["id"]
-                conn.execute("UPDATE labs SET slug = COALESCE(slug, ?), lab_id = COALESCE(lab_id, ?), title = COALESCE(title, ?), description = COALESCE(description, ?), category = COALESCE(category, ?), difficulty = COALESCE(difficulty, ?), xp = COALESCE(xp, ?), updated_at = ? WHERE id = ?", (lab["slug"], lab["id"], lab["title"], lab.get("scenario", ""), lab.get("category", "Cloud Security"), lab.get("difficulty", "Beginner"), lab.get("xp", 100), _utc_now(), catalog_id))
-            else:
-                cursor = conn.execute("INSERT INTO labs (slug, lab_id, title, description, category, difficulty, xp, status, metadata, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?)", (lab["slug"], lab["id"], lab["title"], lab.get("scenario", ""), lab.get("category", "Cloud Security"), lab.get("difficulty", "Beginner"), lab.get("xp", 100), json.dumps({"lab_id": lab["id"]}), _utc_now(), _utc_now()))
-                catalog_id = cursor.lastrowid
-            existing = conn.execute("SELECT session_id FROM lab_sessions WHERE user_id = ? AND lab_id = ? AND status IN ('NOT_STARTED', 'RUNNING', 'RESET') ORDER BY started_at DESC LIMIT 1", (user_id, catalog_id)).fetchone()
-            if existing:
-                conn.execute("UPDATE lab_sessions SET last_activity_at = ? WHERE session_id = ?", (_utc_now(), existing["session_id"]))
-                conn.commit()
-                conn.close()
-                return existing["session_id"]
-            conn.commit()
-            conn.close()
-        session_id = f"session-{uuid.uuid4().hex}"
-        if self.db_url:
-            conn = get_db_connection(self.db_url)
-            now = _utc_now()
-            conn.execute("INSERT INTO lab_sessions (session_id, user_id, lab_id, started_at, last_activity_at, status, metadata) VALUES (?, ?, ?, ?, ?, 'RUNNING', ?)", (session_id, user_id, catalog_id, now, now, json.dumps({"slug": lab["slug"], "lab_id": lab["id"]})))
-            conn.commit()
-            conn.close()
+    def _bootstrap_lab_environment(self, session_id, lab, user_id="student"):
         self.provider.reset_environment(session_id)
-
         for resource in lab.get("resources", []):
             self.provider.create_resource(
                 session_id,
@@ -218,6 +233,38 @@ class LabEngine:
             severity="LOW",
             metadata={"lab_id": lab["id"], "slug": lab["slug"]},
         )
+
+    def start_session(self, lab_id, user_id="student"):
+        lab = self.load_lab(lab_id)
+        catalog_id = 1
+        if self.db_url:
+            conn = get_db_connection(self.db_url)
+            catalog = conn.execute("SELECT id FROM labs WHERE slug = ? OR lab_id = ? LIMIT 1", (lab["slug"], lab["id"])).fetchone()
+            if catalog:
+                catalog_id = catalog["id"]
+                conn.execute("UPDATE labs SET slug = COALESCE(slug, ?), lab_id = COALESCE(lab_id, ?), title = COALESCE(title, ?), description = COALESCE(description, ?), category = COALESCE(category, ?), difficulty = COALESCE(difficulty, ?), xp = COALESCE(xp, ?), updated_at = ? WHERE id = ?", (lab["slug"], lab["id"], lab["title"], lab.get("scenario", ""), lab.get("category", "Cloud Security"), lab.get("difficulty", "Beginner"), lab.get("xp", 100), _utc_now(), catalog_id))
+            else:
+                cursor = conn.execute("INSERT INTO labs (slug, lab_id, title, description, category, difficulty, xp, status, metadata, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, 'published', ?, ?, ?)", (lab["slug"], lab["id"], lab["title"], lab.get("scenario", ""), lab.get("category", "Cloud Security"), lab.get("difficulty", "Beginner"), lab.get("xp", 100), json.dumps({"lab_id": lab["id"]}), _utc_now(), _utc_now()))
+                catalog_id = cursor.lastrowid
+            existing = conn.execute("SELECT session_id FROM lab_sessions WHERE user_id = ? AND lab_id = ? AND status IN ('NOT_STARTED', 'RUNNING', 'RESET') ORDER BY started_at DESC LIMIT 1", (user_id, catalog_id)).fetchone()
+            if existing:
+                session_id = existing["session_id"]
+                conn.execute("UPDATE lab_sessions SET last_activity_at = ? WHERE session_id = ?", (_utc_now(), session_id))
+                conn.commit()
+                conn.close()
+                if not self.provider.list_resources(session_id):
+                    self._bootstrap_lab_environment(session_id, lab, user_id)
+                return session_id
+            conn.commit()
+            conn.close()
+        session_id = f"session-{uuid.uuid4().hex}"
+        if self.db_url:
+            conn = get_db_connection(self.db_url)
+            now = _utc_now()
+            conn.execute("INSERT INTO lab_sessions (session_id, user_id, lab_id, started_at, last_activity_at, status, metadata) VALUES (?, ?, ?, ?, ?, 'RUNNING', ?)", (session_id, user_id, catalog_id, now, now, json.dumps({"slug": lab["slug"], "lab_id": lab["id"]})))
+            conn.commit()
+            conn.close()
+        self._bootstrap_lab_environment(session_id, lab, user_id)
         return session_id
 
     def get_lab_state(self, session_id):
@@ -236,6 +283,9 @@ class LabEngine:
                         lab_id = meta.get("lab_id") or meta.get("slug") or "LAB-001"
                     except Exception:
                         pass
+        lab_def = load_lab_definition(lab_id)
+        if lab_def:
+            lab_id = lab_def["id"]
         return {
             "session_id": session_id,
             "lab_id": lab_id,
@@ -304,38 +354,7 @@ class LabEngine:
             conn.commit()
             conn.close()
         lab = self.load_lab(lab_identifier or "LAB-001")
-        self.provider.reset_environment(session_id)
-        for resource in lab.get("resources", []):
-            self.provider.create_resource(
-                session_id,
-                resource["resource_type"],
-                resource["resource_name"],
-                region=resource.get("region", "ap-south-1"),
-                configuration=resource.get("configuration", {}),
-                status=resource.get("status", "ACTIVE"),
-            )
-        if lab.get("id") == "LAB-004" or lab.get("slug") == "cloudtrail-investigation":
-            initial_events = [
-                ("CloudTrail", "ConsoleLogin", "compromised-user", "IAM_USER", "SUCCESS", "MEDIUM", "compromised-user", {"login_type": "ConsolePassword", "mfa_used": False}),
-                ("S3", "ListAllMyBuckets", "compromised-user", "S3_BUCKET", "SUCCESS", "LOW", "cads-confidential-bucket", {"count": 1}),
-                ("S3", "GetObject", "compromised-user", "S3_OBJECT", "SUCCESS", "HIGH", "cads-confidential-bucket", {"object": "customer-pii.parquet", "classification": "SENSITIVE"}),
-                ("IAM", "GetUser", "compromised-user", "IAM_USER", "SUCCESS", "MEDIUM", "compromised-user", {"user": "compromised-user"}),
-                ("IAM", "AttachUserPolicy", "compromised-user", "IAM_POLICY", "SUCCESS", "HIGH", "compromised-user", {"policy_arn": "arn:aws:iam::aws:policy/AdministratorAccess", "action": "PrivilegeEscalation"}),
-                ("IAM", "CreateAccessKey", "compromised-user", "IAM_USER", "SUCCESS", "HIGH", "compromised-user", {"access_key_id": "AKIAEXAMPLEROOTKEY", "status": "Active"}),
-            ]
-            for service, event_name, actor, r_type, outcome, severity, r_name, meta in initial_events:
-                self.provider.create_event(
-                    session_id,
-                    service=service,
-                    event_name=event_name,
-                    actor=actor,
-                    resource_type=r_type,
-                    outcome=outcome,
-                    severity=severity,
-                    resource_name=r_name,
-                    metadata=meta,
-                    source_ip="198.51.100.99",
-                )
+        self._bootstrap_lab_environment(session_id, lab, "student")
         self.provider.create_event(
             session_id,
             "LabEngine",

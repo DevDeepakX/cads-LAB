@@ -1,8 +1,193 @@
 {% extends "phase4_base.html" %}
 {% block title %}{{ lab.id }} | CADS{% endblock %}
 {% block content %}
-<section class="lab-hero"><div><span class="lab-id">{{ lab.id }}</span><h1>{{ lab.title }}</h1><p class="lede">{{ lab.scenario }}</p></div><div class="lab-hero-meta"><span class="status-chip">{{ lab.difficulty|upper }}</span><strong>{{ lab.xp }} XP</strong></div></section>
-<section class="overview-grid"><article class="panel"><p class="eyebrow">Scenario</p><h2>Investigate the exposure</h2><p class="body-copy">You are a junior cloud security analyst at ExampleCorp. Investigate the simulated account, understand what happened, and apply a defensible remediation backed by evidence.</p><div class="callout"><span class="status-dot"></span><div><strong>Simulation boundary</strong><p>This environment is isolated from AWS. Commands change only the CADS simulator state.</p></div></div></article><article class="panel objective-preview"><div class="panel-heading"><div><p class="eyebrow">Mission brief</p><h2>{{ lab.objectives|length }} objectives</h2></div></div>{% for objective in lab.objectives %}<div class="objective-row"><span class="objective-number">0{{ loop.index }}</span><span>{{ objective.title }}</span></div>{% endfor %}</article></section>
-<section class="start-strip"><div><p class="eyebrow">Ready when you are</p><h2>Open the cloud environment</h2><p class="muted">Your session starts with a fresh set of simulated resources and event history.</p></div><button class="button button-primary" data-start-lab="{{ lab.id }}">Start lab <span>→</span></button></section>
+<section class="lab-hero">
+  <div>
+    <span class="lab-id">{{ lab.id }}</span>
+    <h1>{{ lab.title }}</h1>
+    <p class="lede">{{ lab.scenario }}</p>
+  </div>
+  <div class="lab-hero-meta">
+    <span class="status-chip">{{ lab.difficulty|upper }}</span>
+    <strong>{{ lab.xp }} XP</strong>
+  </div>
+</section>
+
+{% if lab.learning %}
+<section class="learning-section" id="learning-section">
+  <div class="learning-header">
+    <p class="eyebrow">Theory &amp; Concept</p>
+    <h2>Learn Before You Practice</h2>
+    <p class="lede">Understand the underlying architecture, threat model, and diagnostic commands before interacting with the live simulation.</p>
+    <div class="learning-nav">
+      <span class="learning-pill active"><span class="status-dot"></span> Core Theory</span>
+      <span class="learning-pill"><span class="status-dot"></span> Attack Surface</span>
+      <span class="learning-pill"><span class="status-dot"></span> AWS CLI Reference</span>
+      <span class="learning-pill"><span class="status-dot"></span> Defense &amp; Hardening</span>
+    </div>
+  </div>
+
+  <div class="learning-grid">
+    <article class="learning-card">
+      <p class="eyebrow">01 // Architectural Concept</p>
+      <h3>Core Security Concept</h3>
+      <p>{{ lab.learning.concept.explanation if lab.learning.concept is mapping else lab.learning.concept }}</p>
+      {% if lab.learning.why_it_matters or (lab.learning.concept is mapping and lab.learning.concept.why_it_matters) %}
+      <div class="takeaway-box">
+        <p class="eyebrow">Why it matters</p>
+        <p style="margin:4px 0 0; color:#c0d8d3; font-size:13px;">{{ lab.learning.why_it_matters or lab.learning.concept.why_it_matters }}</p>
+      </div>
+      {% endif %}
+    </article>
+
+    <article class="learning-card">
+      <p class="eyebrow">02 // Threat Model &amp; Risk</p>
+      <h3>Security Risk &amp; Exposure</h3>
+      <p>{{ lab.learning.security_risk.explanation if lab.learning.security_risk is mapping else lab.learning.security_risk }}</p>
+      {% if lab.learning.security_risk is mapping and lab.learning.security_risk.impact %}
+      <div class="takeaway-box" style="border-color: rgba(240,113,120,0.3); background: rgba(240,113,120,0.06);">
+        <p class="eyebrow" style="color:var(--coral);">Impact</p>
+        <p style="margin:4px 0 0; color:#f5c2c7; font-size:13px;">{{ lab.learning.security_risk.impact }}</p>
+      </div>
+      {% endif %}
+    </article>
+
+    {% if lab.learning.what_you_will_investigate or lab.learning.investigation_method %}
+    <article class="learning-card full-width">
+      <p class="eyebrow">03 // Investigation Strategy</p>
+      <h3>What You Will Investigate</h3>
+      {% if lab.learning.what_you_will_investigate is sequence and not lab.learning.what_you_will_investigate is string %}
+      <ul class="learning-step-list">
+        {% for step in lab.learning.what_you_will_investigate %}
+        <li class="learning-step-item">
+          <span class="learning-step-num">STEP 0{{ loop.index }}</span>
+          <span>{{ step }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% elif lab.learning.what_you_will_investigate is mapping %}
+      <p>{{ lab.learning.what_you_will_investigate.summary }}</p>
+      {% if lab.learning.what_you_will_investigate.steps %}
+      <ul class="learning-step-list">
+        {% for step in lab.learning.what_you_will_investigate.steps %}
+        <li class="learning-step-item">
+          <span class="learning-step-num">STEP 0{{ loop.index }}</span>
+          <span>{{ step }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endif %}
+      {% if lab.learning.investigation_method %}
+      <div style="margin-top:16px;">
+        <p class="eyebrow">Step-by-Step Method</p>
+        <ul class="learning-step-list">
+          {% for item in lab.learning.investigation_method %}
+          <li class="learning-step-item">
+            <span class="learning-step-num">PHASE {{ loop.index }}</span>
+            <span>{{ item }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </article>
+    {% endif %}
+
+    {% if lab.learning.commands %}
+    <article class="learning-card full-width">
+      <p class="eyebrow">04 // Command Reference Guide</p>
+      <h3>Essential AWS CLI Commands for this Lab</h3>
+      <p>These commands are supported within the CADS simulation terminal. Review their purpose and syntax before starting.</p>
+      <div class="command-grid">
+        {% for cmd in lab.learning.commands %}
+        <div class="command-card">
+          <div class="command-header">
+            <span class="command-badge">AWS CLI</span>
+          </div>
+          <pre class="command-code"><code>{{ cmd.command }}</code></pre>
+          <p class="command-desc">{{ cmd.purpose }}</p>
+          {% if cmd.why_used or cmd.explanation or cmd.why %}
+          <div class="command-why">
+            <strong>Why Use It:</strong> {{ cmd.why_used or cmd.explanation or cmd.why }}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </article>
+    {% endif %}
+
+    {% if lab.learning.defense %}
+    <article class="learning-card">
+      <p class="eyebrow">05 // Defense &amp; Remediation</p>
+      <h3>Defense &amp; Hardening Strategy</h3>
+      <p>{{ lab.learning.defense.strategy if lab.learning.defense is mapping else lab.learning.defense }}</p>
+      {% if lab.learning.defense is mapping and lab.learning.defense.best_practices %}
+      <div class="takeaway-box">
+        <p class="eyebrow">Best Practices</p>
+        <ul>
+          {% for bp in lab.learning.defense.best_practices %}
+          <li>{{ bp }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </article>
+    {% endif %}
+
+    {% if lab.learning.key_takeaways %}
+    <article class="learning-card">
+      <p class="eyebrow">06 // Key Takeaways</p>
+      <h3>Core Learning Objectives</h3>
+      <div class="takeaway-box" style="height: 100%; margin-top: 0;">
+        <ul>
+          {% for takeaway in lab.learning.key_takeaways %}
+          <li>{{ takeaway }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </article>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<section class="overview-grid">
+  <article class="panel">
+    <p class="eyebrow">Scenario</p>
+    <h2>Investigate the exposure</h2>
+    <p class="body-copy">You are a junior cloud security analyst at ExampleCorp. Investigate the simulated account, understand what happened, and apply a defensible remediation backed by evidence.</p>
+    <div class="callout">
+      <span class="status-dot"></span>
+      <div>
+        <strong>Simulation boundary</strong>
+        <p>This environment is isolated from AWS. Commands change only the CADS simulator state.</p>
+      </div>
+    </div>
+  </article>
+  <article class="panel objective-preview">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">Mission brief</p>
+        <h2>{{ lab.objectives|length }} objectives</h2>
+      </div>
+    </div>
+    {% for objective in lab.objectives %}
+    <div class="objective-row">
+      <span class="objective-number">0{{ loop.index }}</span>
+      <span>{{ objective.title }}</span>
+    </div>
+    {% endfor %}
+  </article>
+</section>
+<section class="start-strip">
+  <div>
+    <p class="eyebrow">Ready when you are</p>
+    <h2>Open the cloud environment</h2>
+    <p class="muted">Your session starts with a fresh set of simulated resources and event history.</p>
+  </div>
+  <button class="button button-primary" data-start-lab="{{ lab.id }}">Start lab <span>→</span></button>
+</section>
 <div class="toast" id="page-toast" role="status" aria-live="polite"></div>
 {% endblock %}

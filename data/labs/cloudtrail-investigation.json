@@ -7,6 +7,70 @@
   "xp": 100,
   "provider": "simulator",
   "scenario": "The SOC received an alert regarding suspicious activity in the cloud environment. Analyze CloudTrail audit logs, filter events by username and action, reconstruct the attacker's activity sequence from initial console login through reconnaissance, privilege escalation, and access key creation, investigate the finding, and remediate the compromised credential.",
+  "learning": {
+    "concept": "AWS CloudTrail is an auditing and governance service that records API calls and management events made across an AWS account. Every interaction—whether via the AWS Management Console, AWS CLI, SDKs, or internal services—is logged as an event record containing actor identity (username, ARN, access key ID), timestamp, source IP address, requested API action, parameters, and outcome (Success or Error).",
+    "security_risk": "Without comprehensive audit logging and timely event analysis, unauthorized actions executed by compromised credentials or malicious insiders remain undetected for months. Attackers exploit lack of visibility to conduct silent reconnaissance, escalate privileges, create persistence backdoors (e.g. secondary access keys), and exfiltrate confidential data undetected.",
+    "why_it_matters": "Audit trail log analysis is the foundation of cloud threat detection, incident response, and forensic investigation. Security Operations Center (SOC) analysts must be able to reconstruct the exact chronology of an adversary's actions to identify the initial point of compromise, determine the blast radius, revoke compromised credentials, and remediate affected resources.",
+    "what_you_will_investigate": [
+      "Inspect CloudTrail trail configurations and confirm active logging status.",
+      "Query chronological audit event logs across services and actors.",
+      "Filter event telemetry by suspicious username to reconstruct user activity.",
+      "Identify reconnaissance actions, data access, and privilege escalation attempts.",
+      "Correlate events into a coherent incident timeline to determine root cause and blast radius.",
+      "Investigate the security finding and apply simulated credential revocation and remediation."
+    ],
+    "investigation_method": [
+      "1. Configuration Verification: Inspect trail status to ensure multi-region logging is enabled and operational.",
+      "2. Broad Event Reconnaissance: Query recent CloudTrail events to identify high-severity or unusual API calls.",
+      "3. Identity-Scoped Filtering: Filter event records by the suspicious actor's username to trace their full session.",
+      "4. Event Sequence Correlation: Order events chronologically from initial ConsoleLogin through reconnaissance, privilege escalation, and credential generation.",
+      "5. Incident Response & Containment: Revoke active compromised access keys and detach unauthorized administrative policies.",
+      "6. Post-Incident Verification: Verify that all backdoor keys and elevated privileges have been removed."
+    ],
+    "commands": [
+      {
+        "command": "aws cloudtrail describe-trails",
+        "purpose": "Lists all configured CloudTrail trails and their high-level configuration.",
+        "why_used": "Verifies that logging infrastructure is present, multi-region enabled, and logging to S3.",
+        "example": "aws cloudtrail describe-trails",
+        "explanation": "Checks baseline auditing configuration."
+      },
+      {
+        "command": "aws cloudtrail get-trail-status",
+        "purpose": "Retrieves real-time status and delivery telemetry for CloudTrail logging.",
+        "why_used": "Verifies whether logging is actively running and delivery timestamps.",
+        "example": "aws cloudtrail get-trail-status",
+        "explanation": "Validates that audit telemetry ingestion is operational."
+      },
+      {
+        "command": "aws cloudtrail lookup-events",
+        "purpose": "Queries and returns captured audit events from the last 90 days.",
+        "why_used": "Retrieves recent API activity across the entire account for forensic analysis.",
+        "example": "aws cloudtrail lookup-events",
+        "explanation": "Primary forensic query command for inspecting cloud activity."
+      },
+      {
+        "command": "aws cloudtrail lookup-events --username <username>",
+        "purpose": "Filters CloudTrail audit logs by a specific IAM actor username.",
+        "why_used": "Isolates the activity history of a specific suspected or compromised user.",
+        "example": "aws cloudtrail lookup-events --username compromised-user",
+        "explanation": "Tracks all API calls initiated by a single identity."
+      },
+      {
+        "command": "aws cloudtrail lookup-events --event-name <event-name>",
+        "purpose": "Filters CloudTrail audit records by the specific API action name.",
+        "why_used": "Searches for critical security events such as AttachUserPolicy, CreateAccessKey, or ConsoleLogin.",
+        "example": "aws cloudtrail lookup-events --event-name AttachUserPolicy",
+        "explanation": "Pinpoints occurrences of high-risk actions."
+      }
+    ],
+    "defense": "To defend cloud environments with logging & detection: (1) Enable multi-region CloudTrail trails across all accounts with log file validation and S3 Object Lock for immutability. (2) Stream CloudTrail logs to Amazon CloudWatch Logs and a centralized SIEM/SOC for real-time alerting on critical API calls (e.g. root login, policy modification, disable logging). (3) Deploy automated threat detection tools (e.g. Amazon GuardDuty, AWS Security Hub) to detect behavioral anomalies. (4) Implement automated incident response playbooks to immediately disable compromised credentials.",
+    "key_takeaways": [
+      "CloudTrail captures who did what, from where, and when across all cloud services.",
+      "Event correlation is critical: a single login may look normal, but login + GetObject + AttachUserPolicy + CreateAccessKey reveals an incident.",
+      "Immutable audit logs are mandatory for regulatory compliance, forensics, and defensible security."
+    ]
+  },
   "objectives": [
     {"id": "OBJ-001", "title": "Inspect CloudTrail configuration and trail status", "condition": "trail_status_inspected"},
     {"id": "OBJ-002", "title": "Query CloudTrail audit event logs", "condition": "trail_events_queried"},

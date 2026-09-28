@@ -53,7 +53,13 @@ def login_user(user):
     if row:
         session["lab_session_id"] = row["session_id"]
         metadata = json.loads(row["metadata"] or "{}")
-        session["lab_id"] = metadata.get("lab_id", row["lab_id"])
+        raw_lab_id = metadata.get("lab_id") or metadata.get("slug") or row["lab_id"]
+        try:
+            from app.services.lab_engine import load_lab_definition
+            lab_def = load_lab_definition(raw_lab_id)
+            session["lab_id"] = lab_def["id"] if lab_def else str(raw_lab_id)
+        except Exception:
+            session["lab_id"] = str(raw_lab_id)
 
 
 def login_required(view):

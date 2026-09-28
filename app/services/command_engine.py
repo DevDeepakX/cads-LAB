@@ -4,7 +4,9 @@ import shlex
 from app.security.auth import enforce_safe_command
 
 from .cloud_provider import SimulatorProvider
+from .cloud_simulator import is_allowed_command
 from .event_processor import EventProcessor
+
 
 
 class CommandEngine:
@@ -53,6 +55,7 @@ class CommandEngine:
             "aws s3api get-bucket-policy": "s3.get_bucket_policy",
             "aws s3api get-public-access-block": "s3.get_public_access_block",
             "aws s3api get-bucket-encryption": "s3.get_bucket_encryption",
+            "aws s3api get-bucket-logging": "s3.get_bucket_logging",
             "aws s3api put-public-access-block": "s3.put_public_access_block",
             "aws s3 cp": "s3.copy_object",
             "aws ec2 describe-instances": "ec2.describe-instances",
@@ -240,6 +243,15 @@ class CommandEngine:
         payload = {"Encryption": {"ServerSideEncryptionConfiguration": [{"BucketKeyEnabled": False, "ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256" if not config.get("encryption") else "aws:kms"}}]}}
         self.provider.create_event(session_id, "S3", "GetBucketEncryption", actor="student", resource_type="S3_BUCKET", outcome="SUCCESS", severity="MEDIUM", resource_name=bucket_name, metadata={"bucket": bucket_name})
         return {"status": "ok", "output": self._build_output(payload), "data": payload, "event": {"service": "S3", "event_name": "GetBucketEncryption"}}
+
+    def _handle_s3_get_bucket_logging(self, session_id, parsed):
+        bucket_name = self._extract_bucket_name(parsed["parts"])
+        resource = self.provider.get_resource(session_id, bucket_name)
+        config = resource.get("configuration", {}) if resource else {}
+        is_logging = config.get("logging", False)
+        payload = {"LoggingEnabled": {"TargetBucket": "cads-audit-logs", "TargetPrefix": f"{bucket_name}/logs/"}} if is_logging else {}
+        self.provider.create_event(session_id, "S3", "GetBucketLogging", actor="student", resource_type="S3_BUCKET", outcome="SUCCESS", severity="LOW", resource_name=bucket_name, metadata={"bucket": bucket_name, "logging": is_logging})
+        return {"status": "ok", "output": self._build_output(payload), "data": payload, "event": {"service": "S3", "event_name": "GetBucketLogging"}}
 
     def _handle_s3_copy_object(self, session_id, parsed):
         source = next((token for token in parsed["parts"] if token.startswith("s3://")), "s3://cads-public-data/employee-data.csv")

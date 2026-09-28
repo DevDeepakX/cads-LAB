@@ -7,6 +7,77 @@
   "xp": 100,
   "provider": "simulator",
   "scenario": "You are a junior cloud security analyst at ExampleCorp. The security team received an alert that a storage bucket may have been unintentionally exposed to the public internet. Your task is to investigate the environment, determine whether the bucket is exposed, identify the security impact, and recommend or apply remediation.",
+  "learning": {
+    "concept": "Amazon Simple Storage Service (Amazon S3) is an object storage service that stores data inside containers called buckets. Access control in S3 operates at both the bucket level (via Bucket Policies, Access Control Lists, and S3 Public Access Block) and the object level. A bucket policy is a JSON-based resource policy attached directly to the bucket specifying what actions principals can perform. S3 also supports server-side encryption (SSE) to protect data at rest and access logging to record requests.",
+    "security_risk": "An incorrectly configured storage bucket or overly permissive bucket policy can grant read or write permissions to anonymous external users (represented by wildcard Principal '*'). When public access is enabled, anyone on the internet with the bucket URL or name can enumerate and download files without authentication, leading to unauthorized sensitive data disclosure.",
+    "why_it_matters": "Public storage bucket misconfigurations are one of the most common causes of massive cloud data breaches in real-world organizations. Consequences include data leakage of customer PII, intellectual property theft, exposure of internal credentials or configuration files, regulatory non-compliance fines (e.g., GDPR, HIPAA), and severe reputational damage.",
+    "what_you_will_investigate": [
+      "Enumerate all storage buckets present in the cloud environment.",
+      "Identify which bucket exhibits unhardened or exposed configurations.",
+      "Inspect the bucket resource policy statements and public access block settings.",
+      "Analyze encryption and logging statuses for the storage container.",
+      "Evaluate potential data exposure impact by testing simulated object retrieval.",
+      "Apply defensible public access blocking remediation and verify the hardened posture."
+    ],
+    "investigation_method": [
+      "1. Discovery: List all S3 buckets in the account to establish a baseline inventory.",
+      "2. Configuration Audit: Query the public access block configuration for each identified bucket.",
+      "3. Policy Inspection: Examine the attached bucket policy JSON to look for wildcard Principal ('*') with Allow Effects on GetObject.",
+      "4. Security Controls Assessment: Check whether default encryption and access logging are enabled.",
+      "5. Impact Assessment: Test whether objects within the bucket are accessible without authenticated identity.",
+      "6. Remediation & Verification: Block public access and verify that the security findings resolve."
+    ],
+    "commands": [
+      {
+        "command": "aws s3 ls",
+        "purpose": "Lists all S3 storage buckets in the simulated account.",
+        "why_used": "Discovers the names of available buckets to begin storage reconnaissance.",
+        "example": "aws s3 ls",
+        "explanation": "Primary discovery command for finding storage resources."
+      },
+      {
+        "command": "aws s3api get-public-access-block --bucket <bucket-name>",
+        "purpose": "Retrieves the Public Access Block configuration for a bucket.",
+        "why_used": "Determines whether bucket-level public access protections are enabled or disabled.",
+        "example": "aws s3api get-public-access-block --bucket cads-public-data",
+        "explanation": "Audits the centralized block-public-access settings."
+      },
+      {
+        "command": "aws s3api get-bucket-policy --bucket <bucket-name>",
+        "purpose": "Retrieves the resource-based access policy attached to the bucket.",
+        "why_used": "Checks whether any policy statement permits unauthorized or wildcard ('*') principals.",
+        "example": "aws s3api get-bucket-policy --bucket cads-public-data",
+        "explanation": "Inspects JSON statements defining access permissions."
+      },
+      {
+        "command": "aws s3api get-bucket-encryption --bucket <bucket-name>",
+        "purpose": "Checks the server-side encryption configuration of the bucket.",
+        "why_used": "Verifies whether encryption at rest is enforced for stored data.",
+        "example": "aws s3api get-bucket-encryption --bucket cads-public-data",
+        "explanation": "Validates cryptographic data protection settings."
+      },
+      {
+        "command": "aws s3api get-bucket-logging --bucket <bucket-name>",
+        "purpose": "Checks the server access logging configuration of the bucket.",
+        "why_used": "Determines whether access requests are logged to an audit bucket for forensics.",
+        "example": "aws s3api get-bucket-logging --bucket cads-public-data",
+        "explanation": "Confirms audit logging telemetry status."
+      },
+      {
+        "command": "aws s3 cp s3://<bucket-name>/<object> <local-destination>",
+        "purpose": "Downloads an object from the specified S3 bucket.",
+        "why_used": "Tests whether objects can be retrieved to assess the actual exposure impact.",
+        "example": "aws s3 cp s3://cads-public-data/employee-data.csv local.csv",
+        "explanation": "Simulates data retrieval to evaluate business impact."
+      }
+    ],
+    "defense": "To defend cloud storage assets: (1) Enable Amazon S3 Block Public Access at both account and bucket levels to enforce a centralized guardrail. (2) Strictly enforce least privilege in bucket policies by explicitly defining trusted IAM ARNs rather than wildcard principals. (3) Enable server-side encryption (SSE-S3 or SSE-KMS) with customer-managed keys. (4) Enable S3 server access logging or AWS CloudTrail data events to capture request history for threat detection.",
+    "key_takeaways": [
+      "Wildcard principals ('*') with Allow effects grant access to any anonymous internet user.",
+      "S3 Public Access Block acts as a centralized override preventing accidental policy exposure.",
+      "A complete storage defense requires public access blocking, encryption, and audit logging."
+    ]
+  },
   "objectives": [
     {"id": "OBJ-001", "title": "Enumerate S3 resources", "condition": "list_s3_buckets"},
     {"id": "OBJ-002", "title": "Identify the publicly accessible bucket", "condition": "bucket_public_access_true"},
